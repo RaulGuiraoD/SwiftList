@@ -16,25 +16,25 @@
             <div class="card-body p-4">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h5 class="mb-0 fw-bold">🚀 Nueva Lista</h5>
-                    <button type="button" class="btn btn-sm btn-light text-primary fw-bold rounded-pill px-3" 
-                            data-bs-toggle="modal" data-bs-target="#modalTienda">
+                    <button type="button" class="btn btn-sm btn-light text-primary fw-bold rounded-pill px-3"
+                        data-bs-toggle="modal" data-bs-target="#modalTienda">
                         + Tienda
                     </button>
                 </div>
-                
+
                 <form method="POST" class="d-flex flex-column gap-3">
                     {% csrf_token %}
                     <div class="position-relative">
                         <select name="tienda_id" class="form-select form-select-lg border-0 bg-light px-4"
-                                style="border-radius: 16px; height: 60px; appearance: none;" required>
+                            style="border-radius: 16px; height: 60px; appearance: none;" required>
                             <option value="" disabled selected>Selecciona un súper...</option>
                             {% for tienda in tiendas %}
-                                <option value="{{ tienda.id }}">{{ tienda.nombre }}</option>
+                            <option value="{{ tienda.id }}">{{ tienda.nombre }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm" 
-                            style="border-radius: 16px; height: 60px; font-weight: 600;">
+                    <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm"
+                        style="border-radius: 16px; height: 60px; font-weight: 600;">
                         Empezar Compra
                     </button>
                 </form>
@@ -51,9 +51,11 @@
             <div class="col-12">
                 <a href="{% url 'ver_lista' lista.id %}" class="text-decoration-none">
                     <div class="card border-0 shadow-sm p-3 position-relative overflow-hidden"
-                         style="border-radius: 18px; transition: transform 0.2s ease;">
-                        <div style="position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background-color: {{ lista.tienda.color_hex }};"></div>
-                        
+                        style="border-radius: 18px; transition: transform 0.2s ease;">
+                        <div
+                            style="position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background-color: {{ lista.tienda.color_hex }};">
+                        </div>
+
                         <div class="d-flex justify-content-between align-items-center ms-2">
                             <div>
                                 <h6 class="mb-1 fw-bold text-dark">{{ lista.tienda.nombre }}</h6>
@@ -81,8 +83,9 @@
         </div>
 
         <div class="mt-5 mb-4 px-2 text-center">
-            <a href="#" class="text-secondary text-decoration-none fw-bold small opacity-75">
-                📁 VER HISTORIAL DE COMPRAS
+            <a href="{% url 'listas_archivadas' %}"
+                class="text-secondary text-decoration-none fw-bold small opacity-75">
+                📁 VER COMPRAS PASADAS
             </a>
         </div>
 
@@ -101,23 +104,22 @@
                 <div class="modal-body px-4 pb-4">
                     <div class="mb-4">
                         <label class="form-label text-muted small fw-bold">NOMBRE</label>
-                        <input type="text" name="nombre_tienda"
-                               class="form-control form-control-lg border-0 bg-light"
-                               placeholder="Ej: Mercadona, Aldi..." style="border-radius: 12px;" required>
+                        <input type="text" name="nombre_tienda" class="form-control form-control-lg border-0 bg-light"
+                            placeholder="Ej: Mercadona, Aldi..." style="border-radius: 12px;" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label text-muted small fw-bold">COLOR IDENTIFICATIVO</label>
                         <div class="d-flex align-items-center gap-3">
                             <input type="color" name="color_tienda"
-                                   class="form-control form-control-color border-0 bg-light"
-                                   value="#007bff" style="width: 60px; height: 50px; border-radius: 10px;">
+                                class="form-control form-control-color border-0 bg-light" value="#007bff"
+                                style="width: 60px; height: 50px; border-radius: 10px;">
                             <small class="text-muted">Toca para elegir un color</small>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer border-0 px-4 pb-4">
                     <button type="submit" class="btn btn-primary w-100 py-3 shadow"
-                            style="border-radius: 16px; font-weight: 600;">Guardar Supermercado</button>
+                        style="border-radius: 16px; font-weight: 600;">Guardar Supermercado</button>
                 </div>
             </form>
         </div>

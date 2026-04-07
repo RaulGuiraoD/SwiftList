@@ -1,0 +1,63 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}Historial de Compras{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+        
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <a href="{% url 'dashboard' %}" class="btn btn-light rounded-circle shadow-sm">‹</a>
+            <h4 class="fw-bold mb-0">Compras Pasadas</h4>
+            <div style="width: 40px;"></div>
+        </div>
+
+        <div class="row g-3">
+            {% for lista in listas %}
+            <div class="col-12">
+                <div class="card border-0 shadow-sm p-3" style="border-radius: 18px; border-left: 6px solid {{ lista.tienda.color_hex }} !important;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="fw-bold mb-0 text-dark">{{ lista.tienda.nombre }}</h6>
+                            <small class="text-muted d-block mb-2">
+                                {{ lista.fecha_creacion|date:"d M Y" }} • {{ lista.items.count }} productos
+                            </small>
+                            
+                            {% if lista.total_ticket > 0 %}
+                                <span class="badge bg-success-subtle text-success rounded-pill px-3">
+                                    {{ lista.total_ticket }} €
+                                </span>
+                            {% else %}
+                                <span class="badge bg-light text-muted rounded-pill px-3">
+                                    Sin importe
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex flex-column gap-2">
+                            <a href="{% url 'ver_lista' lista.id %}" class="btn btn-sm btn-light rounded-pill fw-bold text-primary">
+                                Ver
+                            </a>
+                            <form method="POST" action="{% url 'reabrir_lista' lista.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-warning border-0 rounded-pill fw-bold" style="font-size: 0.75rem;">
+                                    Reabrir
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <div class="fs-1 opacity-25">📁</div>
+                <p class="text-muted mt-2">No hay compras en el historial todavía.</p>
+                <a href="{% url 'dashboard' %}" class="btn btn-primary rounded-pill px-4 mt-2">Empezar una</a>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</div>
+{% endblock %}
