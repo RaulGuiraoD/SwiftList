@@ -1,62 +1,73 @@
 {% extends 'layouts/base.html' %}
 {% load static %}
 
-{% block title %}Historial de Compras{% endblock %}
+{% block title %}Historial de Compras - MarketList{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-12 col-md-8 col-lg-6">
+    <div class="col-12 col-md-8 col-lg-6 text-center">
         
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <a href="{% url 'dashboard' %}" class="btn btn-light rounded-circle shadow-sm">‹</a>
-            <h4 class="fw-bold mb-0">Compras Pasadas</h4>
-            <div style="width: 40px;"></div>
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <a href="{% url 'dashboard' %}" class="btn btn-light rounded-circle shadow-sm btn-back">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+            <h4 class="fw-bold mb-0 text-uppercase label-spacing">Compras pasadas</h4>
+            <div class="spacer-header"></div>
         </div>
 
-        <div class="row g-3">
-            {% for lista in listas %}
-            <div class="col-12">
-                <div class="card border-0 shadow-sm p-3" style="border-radius: 18px; border-left: 6px solid {{ lista.tienda.color_hex }} !important;">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="flex-grow-1">
-                            <h6 class="fw-bold mb-0 text-dark">{{ lista.tienda.nombre }}</h6>
-                            <small class="text-muted d-block mb-2">
-                                {{ lista.fecha_creacion|date:"d M Y" }} • {{ lista.items.count }} productos
-                            </small>
-                            
-                            {% if lista.total_ticket > 0 %}
-                                <span class="badge bg-success-subtle text-success rounded-pill px-3">
-                                    {{ lista.total_ticket }} €
-                                </span>
-                            {% else %}
-                                <span class="badge bg-light text-muted rounded-pill px-3">
-                                    Sin importe
-                                </span>
-                            {% endif %}
-                        </div>
+        <section class="section-gap">
+            <div class="row g-3">
+                {% for lista in listas %}
+                <div class="col-12">
+                    <div class="card card-historial border-0 shadow-sm p-3 text-start" 
+                         style="border-left: 6px solid {{ lista.tienda.color_hex }} !important;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="flex-grow-1">
+                                <h6 class="fw-bold mb-1 text-dark">{{ lista.tienda.nombre }}</h6>
+                                <p class="text-muted small mb-2 text-uppercase fw-bold label-frecuencia">
+                                    {{ lista.fecha_creacion|date:"d M Y" }} • {{ lista.items.count }} productos
+                                </p>
+                                
+                                {% if lista.total_ticket > 0 %}
+                                    <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">
+                                        {{ lista.total_ticket }} €
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-light text-muted rounded-pill px-3 py-2">
+                                        Sin importe
+                                    </span>
+                                {% endif %}
+                            </div>
 
-                        <div class="d-flex flex-column gap-2">
-                            <a href="{% url 'ver_lista' lista.id %}" class="btn btn-sm btn-light rounded-pill fw-bold text-primary">
-                                Ver
-                            </a>
-                            <form method="POST" action="{% url 'reabrir_lista' lista.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-sm btn-outline-warning border-0 rounded-pill fw-bold" style="font-size: 0.75rem;">
-                                    Reabrir
-                                </button>
-                            </form>
+                            <div class="d-flex flex-column gap-2">
+                                <a href="{% url 'ver_lista' lista.id %}" class="btn btn-sm btn-action-historial btn-view-historial">
+                                    VER
+                                </a>
+                                <form method="POST" action="{% url 'reabrir_lista' lista.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-action-historial btn-reopen-historial w-100">
+                                        REABRIR
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
+                {% empty %}
+                <div class="col-12 text-center py-5">
+                    <div class="card border-0 shadow-sm py-5 card-rounded">
+                        <div class="card-body">
+                            <i class="bi bi-archive text-muted opacity-25 fs-1 d-block mb-3"></i>
+                            <p class="text-muted mb-4">No hay compras en el historial todavía</p>
+                            <a href="{% url 'dashboard' %}" class="btn btn-primary rounded-pill px-4 fw-bold">
+                                EMPEZAR UNA COMPRA
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
-            {% empty %}
-            <div class="col-12 text-center py-5">
-                <div class="fs-1 opacity-25">📁</div>
-                <p class="text-muted mt-2">No hay compras en el historial todavía.</p>
-                <a href="{% url 'dashboard' %}" class="btn btn-primary rounded-pill px-4 mt-2">Empezar una</a>
-            </div>
-            {% endfor %}
-        </div>
+        </section>
 
     </div>
 </div>

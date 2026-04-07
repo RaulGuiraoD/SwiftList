@@ -1,24 +1,372 @@
-body {
-    background-color: #f8f9fa;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    -webkit-tap-highlight-color: transparent; /* Quita el destello azul al tocar en móvil */
+:root {
+    --bg-warm: #fdfcf9;
+    --primary-green: #2d5a27;
+    --primary-green-light: #e8f5e9;
+    --text-dark: #2c2c2c;
+    --text-muted: #7a7a7a;
+    --card-border: #f0eee4;
+    --danger-red: #ff4d4d;
 }
 
-.container-main {
-    max-width: 600px;
-    margin: 0 auto;
+body { 
+    background-color: var(--bg-warm); 
+    color: var(--text-dark);
+    font-family: 'Outfit', sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
-.btn-action {
-    width: 45px;
-    height: 45px;
+.container-main { max-width: 600px; }
+
+/* Botones */
+.btn-primary { 
+    background-color: var(--primary-green) !important; 
+    border: none !important;
+    border-radius: 16px;
+    font-weight: 600;
+}
+
+/* Sobrescribimos el comportamiento de Bootstrap para el botón outline */
+.btn-outline-primary {
+    color: var(--primary-green) !important;
+    border-color: var(--primary-green) !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-green) !important;
+    border-color: var(--primary-green) !important;
+    color: white !important; /* El texto pasa a blanco sobre el fondo verde */
+}
+
+.btn-danger-custom {
+    background-color: var(--danger-red);
+    color: white;
+    border: none;
+    border-radius: 18px;
+    padding: 12px;
+    font-weight: 700;
+}
+
+.btn-cancel {
+    background: transparent;
+    color: var(--text-muted);
+    font-weight: 600;
+    border: none;
+}
+
+/* Tarjetas e Inputs */
+.card {
+    border-radius: 24px;
+    border: 1px solid var(--card-border);
+    background-color: #ffffff;
+}
+
+.form-control, .form-select {
+    background-color: #ffffff !important;
+    border: 1px solid var(--card-border) !important;
+    border-radius: 16px !important;
+    padding: 12px 20px;
+}
+
+/* Modales */
+.modal-confirm {
+    border-radius: 30px !important;
+    border: none !important;
+}
+
+.icon-danger {
+    color: var(--danger-red);
+    font-size: 3.5rem;
+}
+
+/* Utilitarios */
+.text-primary { color: var(--primary-green) !important; }
+.bg-primary-subtle { 
+    background-color: var(--primary-green-light) !important; 
+    color: var(--primary-green) !important; 
+}
+
+/* --- Estilos extraídos del Dashboard --- */
+.card-dashboard-main {
+    background: #ffffff;
+    border: 1px solid #f0eee4 !important;
+}
+
+.btn-add-super {
+    font-size: 0.8rem;
+}
+
+.select-custom-dash {
+    border-radius: 18px !important;
+    height: 65px;
+    appearance: none;
+    font-size: 1rem;
+}
+
+.btn-empezar {
+    border-radius: 18px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px;
+}
+
+.text-secondary-custom {
+    color: #4a4a4a;
+}
+
+.card-lista-abierta {
+    border-radius: 20px !important;
+    background: white;
+}
+
+.indicador-color-tienda {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 8px;
+}
+
+.badge-productos {
+    font-size: 0.7rem;
+}
+
+.empty-state-dash {
+    border-radius: 20px;
+    border: 2px dashed #f0eee4;
+    background: white;
+}
+
+.btn-stats-dash {
+    border-radius: 18px !important;
+    color: #2d5a27 !important;
+    background: white !important;
+}
+
+.small-caps {
+    font-size: 0.7rem;
+}
+
+.footer-brand {
+    letter-spacing: 2px;
+    font-size: 0.6rem;
+}
+
+.modal-tienda-dash {
+    border-radius: 30px !important;
+}
+
+.label-spacing {
+    letter-spacing: 1px;
+}
+
+.input-tienda-name {
+    border-radius: 15px !important;
+    font-size: 1rem;
+}
+
+.input-color-custom {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px !important;
+    background: none !important;
+}
+
+.btn-save-store {
+    border-radius: 18px !important;
+    font-weight: 700 !important;
+}
+
+/* --- Estilos de Estadísticas (Refactorizados) --- */
+
+/* Separación modular entre bloques */
+.section-gap {
+    margin-bottom: 3.5rem;
+}
+
+/* Tipografía y Labels */
+.label-spacing {
+    letter-spacing: 1.5px;
+    font-size: 0.9rem;
+}
+
+.card-rounded {
+    border-radius: 20px !important;
+}
+
+/* Ajustes en la tarjeta principal */
+.card-stats-hero {
+    border-radius: 28px !important;
+    background: linear-gradient(135deg, var(--primary-green), #3d6b36) !important;
+}
+
+.divider-stats {
+    height: 2px;
+    background: rgba(255, 255, 255, 0.15);
+    width: 60px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Tarjetas de tiendas */
+.card-store-stat {
+    border-radius: 22px !important;
+    transition: all 0.3s ease;
+}
+
+.card-store-stat h4 {
+    letter-spacing: -0.5px;
+}
+
+/* Botón volver centrado visualmente */
+.btn-back {
+    background: var(--white) !important;
+    border: 1px solid var(--card-border) !important;
+    color: var(--primary-green) !important;
+    width: 42px;
+    height: 42px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    transition: transform 0.1s ease;
 }
 
-.btn-action:active {
-    transform: scale(0.9); /* Feedback táctil al pulsar */
+/* --- Estilos de Gestión de Productos --- */
+
+.input-search-custom {
+    border-radius: 18px !important;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.input-search-custom:focus {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05) !important;
+}
+
+.label-frecuencia {
+    font-size: 0.65rem;
+    letter-spacing: 0.5px;
+}
+
+/* Botón de borrado minimalista */
+.btn-delete-minimal {
+    color: var(--danger-red);
+    background: transparent;
+    border: 1px solid transparent;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+.btn-delete-minimal:hover {
+    background-color: #fff5f5;
+    border-color: #ffe0e0;
+}
+
+/* Alineación de iconos en botones circulares */
+.btn-back i {
+    font-size: 1.1rem;
+}
+
+/* --- Estilos de la Lista de Compra --- */
+
+/* Input de añadir */
+.input-group-rounded {
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+.input-add-item {
+    font-size: 1rem !important;
+    height: 60px;
+}
+
+.btn-add-icon {
+    width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Items de la lista */
+.item-producto-lista {
+    border-radius: 16px !important;
+    padding: 1rem 1.2rem;
+    transition: all 0.2s ease;
+    margin-bottom: 0.5rem;
+}
+
+.item-muted {
+    background-color: #f8f9fa !important;
+}
+
+/* Botones de acción */
+.btn-action-check, .btn-action-delete {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-check {
+    background-color: var(--primary-green-light);
+    color: var(--primary-green);
+}
+
+.btn-checked {
+    background-color: var(--primary-green);
+    color: white;
+}
+
+.btn-action-delete {
+    background-color: #fff5f5;
+    color: var(--danger-red);
+}
+
+.btn-action-delete:hover {
+    background-color: var(--danger-red);
+    color: white;
+}
+
+/* Efecto tachado manual si no usas bootstrap class */
+.completado {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+/* --- Estilos del Historial --- */
+
+.card-historial {
+    border-radius: 18px !important;
+    transition: transform 0.2s ease;
+}
+
+.card-historial:hover {
+    transform: scale(1.01);
+}
+
+.btn-action-historial {
+    font-size: 0.65rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.5px;
+    padding: 8px 15px !important;
+    border-radius: 12px !important;
+    border: none !important;
+}
+
+.btn-view-historial {
+    background-color: var(--primary-green-light) !important;
+    color: var(--primary-green) !important;
+}
+
+.btn-reopen-historial {
+    background-color: #fff9e6 !important; /* Amarillo muy suave */
+    color: #856404 !important; /* Texto ocre para legibilidad */
+}
+
+.btn-reopen-historial:hover {
+    background-color: #ffecb3 !important;
 }

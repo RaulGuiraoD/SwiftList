@@ -4,48 +4,67 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-12 col-md-8 col-lg-6">
+    <div class="col-12 col-md-8 col-lg-6 text-center">
         
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <a href="{% url 'dashboard' %}" class="btn btn-light rounded-circle shadow-sm">‹</a>
-            <h4 class="fw-bold mb-0">Tus Números 📊</h4>
-            <div style="width: 40px;"></div>
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <a href="{% url 'dashboard' %}" class="btn btn-light rounded-circle shadow-sm btn-back">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+            <h4 class="fw-bold mb-0 text-uppercase label-spacing">Estadísticas de compra</h4>
+            <div class="spacer-header"></div>
         </div>
 
-        <div class="card border-0 shadow-lg mb-4 text-white text-center" style="border-radius: 25px; background: linear-gradient(45deg, #0d6efd, #0dcaf0);">
-            <div class="card-body py-4">
-                <p class="mb-0 opacity-75">Gasto este mes</p>
-                <h1 class="display-4 fw-bold mb-0">{{ gasto_mes|stringformat:".2f" }}€</h1>
-                <small class="opacity-75">Total histórico: {{ gasto_total|stringformat:".2f" }}€</small>
-            </div>
-        </div>
-
-        <h5 class="fw-bold mb-3 px-2">Más comprados 🌟</h5>
-        <div class="card border-0 shadow-sm mb-4" style="border-radius: 20px;">
-            <div class="list-group list-group-flush rounded-4">
-                {% for prod in top_productos %}
-                <div class="list-group-item d-flex justify-content-between align-items-center py-3">
-                    <span class="fw-bold">{{ prod.nombre }}</span>
-                    <span class="badge bg-primary-subtle text-primary rounded-pill">{{ prod.frecuencia_uso }} veces</span>
+        <section class="section-gap">
+            <div class="card card-stats-hero border-0 shadow-lg text-white">
+                <div class="card-body py-5">
+                    <p class="mb-1 opacity-75 fw-bold text-uppercase label-stats">Gasto mensual</p>
+                    <h1 class="display-3 fw-bold mb-2">{{ gasto_mes|stringformat:".2f" }}€</h1>
+                    <div class="divider-stats my-3"></div>
+                    <p class="mb-0 opacity-75 fw-semibold">Total acumulado: {{ gasto_total|stringformat:".2f" }}€</p>
                 </div>
-                {% empty %}
-                <p class="text-center p-4 text-muted">Aún no hay datos suficientes.</p>
+            </div>
+        </section>
+
+        <section class="section-gap">
+            <h5 class="fw-bold mb-4 text-uppercase label-spacing text-secondary-custom">Productos más comprados</h5>
+            <div class="card border-0 shadow-sm overflow-hidden card-rounded">
+                <div class="list-group list-group-flush">
+                    {% for prod in top_productos %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-3 border-light px-4">
+                        <span class="fw-bold text-dark">{{ prod.nombre }}</span>
+                        <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">
+                            {{ prod.frecuencia_uso }} unidades
+                        </span>
+                    </div>
+                    {% empty %}
+                    <div class="py-5">
+                        <i class="bi bi-graph-up text-muted opacity-25 fs-1 d-block mb-2"></i>
+                        <p class="text-muted mb-0 small">No hay datos de productos registrados</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <section class="section-gap mb-5">
+            <h5 class="fw-bold mb-4 text-uppercase label-spacing text-secondary-custom">Gasto por establecimiento</h5>
+            <div class="row g-4">
+                {% for t in tiendas_stats %}
+                <div class="col-6">
+                    <div class="card card-store-stat border-0 shadow-sm p-4 h-100" 
+                         style="border-top: 5px solid {{ t.color_hex }} !important;">
+                        <h6 class="fw-bold mb-2 text-dark text-truncate">{{ t.nombre }}</h6>
+                        <h4 class="text-primary fw-bold mb-1">{{ t.total_gastado|default:0|stringformat:".2f" }}€</h4>
+                        <div class="mt-2 pt-2 border-top border-light">
+                            <small class="text-muted fw-bold text-uppercase" style="font-size: 0.65rem;">
+                                {{ t.num_visitas }} visitas
+                            </small>
+                        </div>
+                    </div>
+                </div>
                 {% endfor %}
             </div>
-        </div>
-
-        <h5 class="fw-bold mb-3 px-2">Por Supermercado 🛒</h5>
-        <div class="row g-3">
-            {% for t in tiendas_stats %}
-            <div class="col-6">
-                <div class="card border-0 shadow-sm p-3 text-center" style="border-radius: 20px; border-top: 5px solid {{ t.color_hex }} !important;">
-                    <h6 class="fw-bold mb-1">{{ t.nombre }}</h6>
-                    <h5 class="text-primary mb-0">{{ t.total_gastado|default:0|stringformat:".2f" }}€</h5>
-                    <small class="text-muted">{{ t.num_visitas }} visitas</small>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
+        </section>
 
     </div>
 </div>

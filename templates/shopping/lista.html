@@ -1,51 +1,65 @@
 {% extends 'layouts/base.html' %}
 {% load static %}
 
-{% block title %}Mi Lista{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/lista.css' %}">
-{% endblock %}
+{% block title %}Mi Lista - MarketList{% endblock %}
 
 {% block content %}
-<header class="text-center mb-4">
-    <h1 class="h2 fw-bold text-dark">🛒 MarketList</h1>
-</header>
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6 text-center">
+        
+        <header class="mb-5">
+            <h2 class="fw-bold text-dark text-uppercase label-spacing">Lista de compra</h2>
+            <div class="divider-stats my-3"></div>
+        </header>
 
-<form method="POST" class="mb-4">
-    {% csrf_token %}
-    <div class="input-group shadow-sm border-0">
-        <input type="text" name="nombre" class="form-control form-control-lg input-compra"
-            placeholder="Añadir producto..." required autofocus>
-        <button class="btn btn-primary px-4 btn-añadir" type="submit">
-            <b>+</b>
-        </button>
-    </div>
-</form>
+        <section class="section-gap">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="input-group shadow-sm border-0 input-group-rounded">
+                    <input type="text" name="nombre" class="form-control form-control-lg border-0 px-4 input-add-item"
+                        placeholder="Añadir nuevo producto..." required autofocus>
+                    <button class="btn btn-primary px-4 btn-add-icon" type="submit">
+                        <i class="bi bi-plus-lg"></i>
+                    </button>
+                </div>
+            </form>
+        </section>
 
-<div class="list-group">
-    {% for producto in productos %}
-    <div class="list-group-item d-flex align-items-center bg-white item-producto">
-        <div class="flex-grow-1">
-            <span class="fs-5 {% if producto.completado %}completado{% endif %}">
-                {{ producto.nombre }}
-            </span>
+        <section class="section-gap">
+            <div class="list-group list-group-flush gap-2">
+                {% for producto in productos %}
+                <div class="list-group-item d-flex align-items-center border-0 shadow-sm item-producto-lista {% if producto.completado %}item-muted{% endif %}">
+                    <div class="flex-grow-1 text-start">
+                        <span class="fs-5 fw-semibold {% if producto.completado %}text-decoration-line-through opacity-50{% endif %}">
+                            {{ producto.nombre }}
+                        </span>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'completar_producto' producto.pk %}"
+                            class="btn btn-action-check {% if producto.completado %}btn-checked{% else %}btn-outline-check{% endif %}">
+                            <i class="bi bi-check-lg"></i>
+                        </a>
+                        <a href="{% url 'eliminar_producto' producto.pk %}" class="btn btn-action-delete">
+                            <i class="bi bi-x-lg"></i>
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="card border-0 shadow-sm py-5 card-rounded">
+                    <div class="card-body">
+                        <i class="bi bi-cart-x text-muted opacity-25 fs-1 d-block mb-3"></i>
+                        <p class="text-muted mb-0">La lista está vacía actualmente</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <div class="mt-4">
+             <a href="{% url 'dashboard' %}" class="btn btn-cancel text-uppercase fw-bold label-spacing">Volver al panel</a>
         </div>
 
-        <div class="d-flex">
-            <a href="{% url 'completar_producto' producto.pk %}"
-                class="btn {% if producto.completado %}btn-light text-muted{% else %}btn-outline-success{% endif %} btn-action me-2">
-                ✓
-            </a>
-            <a href="{% url 'eliminar_producto' producto.pk %}" class="btn btn-outline-danger btn-action">
-                ✕
-            </a>
-        </div>
     </div>
-    {% empty %}
-    <div class="text-center empty-state">
-        <p>La lista está vacía.</p>
-    </div>
-    {% endfor %}
 </div>
 {% endblock %}

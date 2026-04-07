@@ -1,11 +1,17 @@
 from django.db import models
 
 class Tienda(models.Model):
-    nombre = models.CharField(max_length=100) # Ej: Mercadona, BonÀrea
-    color_hex = models.CharField(max_length=7, default="#007bff") # Para diferenciar visualmente
+    # Añadimos unique=True para que la base de datos no acepte repetidos
+    nombre = models.CharField(max_length=100, unique=True) 
+    color_hex = models.CharField(max_length=7, default="#0a8f34")
 
     def __str__(self):
         return self.nombre
+
+    # Forzamos que el nombre siempre se guarde con la primera letra en mayúscula
+    def save(self, *args, **kwargs):
+        self.nombre = self.nombre.strip().capitalize()
+        super().save(*args, **kwargs)
 
 class MaestroProducto(models.Model):
     """ El 'cerebro'. Aquí se guarda todo lo que ella ha comprado alguna vez. """

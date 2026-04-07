@@ -1,20 +1,24 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db import models 
+from django.db import models, IntegrityError
 from django.db.models import Sum, Count, Q
 from django.utils import timezone
 from .models import Tienda, ListaCompra, MaestroProducto, ItemLista
 
 def dashboard(request):
     listas_abiertas = ListaCompra.objects.filter(esta_finalizada=False).order_by('-fecha_creacion')
-    tiendas = Tienda.objects.all()
+    tiendas = Tienda.objects.all().order_by('nombre')
 
     if request.method == 'POST':
         # Caso A: Añadir una tienda nueva
         if 'nombre_tienda' in request.POST:
-            nombre = request.POST.get('nombre_tienda')
+            nombre = request.POST.get('nombre_tienda', '').strip().capitalize()
             color = request.POST.get('color_tienda', '#007bff')
+            
             if nombre:
-                Tienda.objects.create(nombre=nombre, color_hex=color)
+                # Verificamos si ya existe para no dar error de sistema
+                if not Tienda.objects.filter(nombre=nombre).exists():
+                    Tienda.objects.create(nombre=nombre, color_hex=color)
+                # Si ya existe, simplemente no hacemos nada (o podrías mandar un mensaje)
             return redirect('dashboard')
 
         # Caso B: Crear una nueva lista de la compra
@@ -28,6 +32,36 @@ def dashboard(request):
         'listas_abiertas': listas_abiertas,
         'tiendas': tiendas,
     })
+
+def gestionar_tiendas(request):
+    tiendas = Tienda.objects.all().order_by('nombre')
+    return render(request, 'shopping/gestionar_tiendas.html', {'tiendas': tiendas})
+
+def eliminar_tienda(request, tienda_id):
+    tienda = get_object_or_404(Tienda, id=tienda_id)
+    # Al eliminar la tienda, se borrarán sus listas por el models.CASCADE
+    tienda.delete()
+    return redirect('gestionar_tiendas')
+
+def editar_tienda(request, tienda_id):
+    tienda = get_object_or_404(Tienda, id=tienda_id)
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre').strip().capitalize()
+        color = request.POST.get('color_hex')
+        
+        if nombre:
+            try:
+                # Comprobamos que no exista OTRA tienda con ese nombre
+                # (excluyendo la propia tienda que estamos editando)
+                if not Tienda.objects.exclude(id=tienda.id).filter(nombre=nombre).exists():
+                    tienda.nombre = nombre
+                    tienda.color_hex = color
+                    tienda.save()
+            except IntegrityError:
+                pass
+                
+    return redirect('gestionar_tiendas') # Siempre vuelve a la lista de gestión
+
 
 def ver_lista(request, lista_id):
     lista = get_object_or_404(ListaCompra, id=lista_id)

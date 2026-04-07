@@ -1,37 +1,60 @@
 {% extends 'layouts/base.html' %}
 
+{% block title %}Mis Productos - MarketList{% endblock %}
+
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-12 col-md-8 col-lg-6">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <a href="{% url 'dashboard' %}" class="btn btn-light rounded-circle">‹</a>
-            <h4 class="fw-bold mb-0">Mis Productos 🧠</h4>
-            <div style="width: 40px;"></div>
+    <div class="col-12 col-md-8 col-lg-6 text-center">
+        
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <a href="{% url 'dashboard' %}" class="btn btn-light rounded-circle shadow-sm btn-back">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+            <h4 class="fw-bold mb-0 text-uppercase label-spacing">Catálogo de productos</h4>
+            <div class="spacer-header"></div>
         </div>
 
-        <form method="GET" class="mb-4">
-            <input type="text" name="q" class="form-control border-0 shadow-sm py-3 px-4" 
-                   placeholder="Buscar producto..." style="border-radius: 15px;">
-        </form>
-
-        <div class="card border-0 shadow-sm" style="border-radius: 20px;">
-            <div class="list-group list-group-flush">
-                {% for p in productos %}
-                <div class="list-group-item d-flex justify-content-between align-items-center py-3">
-                    <div>
-                        <span class="fw-bold">{{ p.nombre }}</span>
-                        <small class="text-muted d-block">Usado {{ p.frecuencia_uso }} veces</small>
-                    </div>
-                    <form method="POST" action="{% url 'eliminar_producto_maestro' p.id %}" onsubmit="return confirm('Si borras esto, ya no saldrá en las sugerencias. ¿Ok?');">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-sm btn-outline-danger border-0">Borrar</button>
-                    </form>
+        <section class="section-gap">
+            <form method="GET" class="mb-2">
+                <div class="position-relative">
+                    <input type="text" name="q" class="form-control border-0 shadow-sm py-3 px-4 input-search-custom" 
+                           placeholder="Buscar en mis productos..." value="{{ request.GET.q|default:'' }}">
+                    <i class="bi bi-search position-absolute end-0 top-50 translate-middle-y me-4 text-muted"></i>
                 </div>
-                {% empty %}
-                <p class="text-center p-4">No hay productos guardados.</p>
-                {% endfor %}
+            </form>
+        </section>
+
+        <section class="section-gap">
+            <div class="card border-0 shadow-sm overflow-hidden card-rounded">
+                <div class="list-group list-group-flush">
+                    {% for p in productos %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-3 border-light px-4 text-start">
+                        <div>
+                            <span class="fw-bold text-dark d-block">{{ p.nombre }}</span>
+                            <small class="text-muted text-uppercase fw-bold label-frecuencia">
+                                Usado {{ p.frecuencia_uso }} veces
+                            </small>
+                        </div>
+                        
+                        <form method="POST" action="{% url 'eliminar_producto_maestro' p.id %}">
+                            {% csrf_token %}
+                            <button type="button" class="btn btn-delete-minimal" 
+                                    onclick="confirmDelete(event, this, '¿Eliminar {{ p.nombre }} de las sugerencias?')">
+                                <i class="bi bi-trash3"></i>
+                                <span class="ms-1">BORRAR</span>
+                            </button>
+                        </form>
+                    </div>
+                    {% empty %}
+                    <div class="py-5">
+                        <i class="bi bi-box-seam text-muted opacity-25 fs-1 d-block mb-2"></i>
+                        <p class="text-muted mb-0 small">No se encontraron productos guardados</p>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
-        </div>
+        </section>
+
     </div>
 </div>
 {% endblock %}

@@ -8,105 +8,120 @@
     <div class="col-12 col-md-8 col-lg-6">
 
         <header class="text-center my-5">
+            <div class="d-inline-block p-3 bg-white shadow-sm rounded-circle mb-3">
+                <i class="bi bi-basket2-fill text-primary fs-2"></i>
+            </div>
             <h1 class="display-5 fw-bold text-dark">Market<span class="text-primary">List</span></h1>
-            <p class="text-muted">Gestión inteligente de compras</p>
+            <p class="text-muted italic">Tu compra, más fácil que nunca</p>
         </header>
 
-        <div class="card border-0 shadow-lg mb-5" style="border-radius: 24px; background: #ffffff;">
+        <div class="card card-dashboard-main border-0 shadow-sm mb-5">
             <div class="card-body p-4">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="mb-0 fw-bold">
-                        <i class="bi bi-plus-circle-fill me-2 text-primary"></i>Nueva Lista
+                    <h5 class="mb-0 fw-bold text-dark">
+                        <i class="bi bi-magic me-2 text-primary"></i>Nueva Lista
                     </h5>
-                    <button type="button" class="btn btn-sm btn-light text-primary fw-bold rounded-pill px-3"
+                    <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold btn-add-super"
                         data-bs-toggle="modal" data-bs-target="#modalTienda">
-                        <i class="bi bi-shop me-1"></i> Tienda
+                        <i class="bi bi-plus-lg me-1"></i> AÑADIR SÚPER
                     </button>
                 </div>
 
                 <form method="POST" class="d-flex flex-column gap-3">
                     {% csrf_token %}
                     <div class="position-relative">
-                        <select name="tienda_id" class="form-select form-select-lg border-0 bg-light px-4"
-                            style="border-radius: 16px; height: 60px; appearance: none;" required>
-                            <option value="" disabled selected>Selecciona un supermercado...</option>
+                        <select name="tienda_id" class="form-select form-select-lg border-0 bg-light px-4 select-custom-dash" required>
+                            <option value="" disabled selected>¿A qué súper vas hoy?</option>
                             {% for tienda in tiendas %}
                             <option value="{{ tienda.id }}">{{ tienda.nombre }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm"
-                        style="border-radius: 16px; height: 60px; font-weight: 600;">
-                        <i class="bi bi-play-fill me-1"></i> Empezar Compra
+                    <button type="submit" class="btn btn-primary btn-lg w-100 shadow-sm py-3 btn-empezar">
+                        EMPEZAR AHORA
                     </button>
                 </form>
             </div>
         </div>
 
         <div class="d-flex justify-content-between align-items-center mb-3 px-2">
-            <h5 class="fw-bold mb-0">Listas en curso</h5>
-            <span class="badge rounded-pill bg-primary-subtle text-primary">{{ listas_abiertas.count }}</span>
+            <h5 class="fw-bold mb-0 text-secondary-custom">Listas abiertas</h5>
+            <span class="badge rounded-pill bg-primary-subtle px-3">{{ listas_abiertas.count }}</span>
         </div>
 
         <div class="row g-3">
             {% for lista in listas_abiertas %}
             <div class="col-12">
-                <div class="card border-0 shadow-sm p-3 position-relative overflow-hidden"
-                    style="border-radius: 18px;">
+                <div class="card card-lista-abierta border-0 shadow-sm p-3 position-relative overflow-hidden">
                     
-                    <div style="position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background-color: {{ lista.tienda.color_hex }};"></div>
+                    <div class="indicador-color-tienda" style="background-color: {{ lista.tienda.color_hex }};"></div>
 
                     <div class="d-flex justify-content-between align-items-center ms-2">
                         <a href="{% url 'ver_lista' lista.id %}" class="text-decoration-none flex-grow-1">
-                            <div>
-                                <h6 class="mb-1 fw-bold text-dark">{{ lista.tienda.nombre }}</h6>
+                            <div class="py-1">
+                                <h6 class="mb-1 fw-bold text-dark fs-5">{{ lista.tienda.nombre }}</h6>
                                 <div class="d-flex align-items-center text-muted">
-                                    <small><i class="bi bi-calendar3 me-1"></i> {{ lista.fecha_creacion|date:"d M" }}</small>
-                                    <span class="mx-2">•</span>
-                                    <small class="badge bg-light text-primary rounded-pill fw-bold">
-                                        {{ lista.items.count }} productos
-                                    </small>
+                                    <small class="me-3"><i class="bi bi-clock me-1"></i> {{ lista.fecha_creacion|date:"d M, H:i" }}</small>
+                                    <span class="badge bg-light text-dark border-0 rounded-pill px-2 py-1 badge-productos">
+                                        {{ lista.items.count }} PRODUCTOS
+                                    </span>
                                 </div>
                             </div>
                         </a>
 
-                        <form method="POST" action="{% url 'eliminar_lista' lista.id %}"
-                            onsubmit="return confirm('¿Seguro que quieres borrar esta lista?');">
+                        <form method="POST" action="{% url 'eliminar_lista' lista.id %}">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-link text-danger opacity-50 text-decoration-none px-2">
-                                <i class="bi bi-trash3 fs-5"></i>
+                            <button type="button" class="btn btn-link text-danger opacity-25 px-2 text-decoration-none" 
+                                    onclick="confirmDelete(event, this, '¿Borrar lista de {{ lista.tienda.nombre }}?')">
+                                <i class="bi bi-x-circle-fill fs-4"></i>
                             </button>
                         </form>
                     </div>
                 </div>
             </div>
             {% empty %}
-            <div class="col-12 text-center py-5 bg-white rounded-4 shadow-sm">
-                <div class="text-primary opacity-25 mb-2">
-                    <i class="bi bi-check2-all" style="font-size: 3rem;"></i>
-                </div>
-                <p class="text-muted mb-0">Todo al día. No hay listas abiertas.</p>
+            <div class="col-12 text-center py-5 empty-state-dash shadow-sm">
+                <i class="bi bi-emoji-smile text-muted opacity-50 fs-1"></i>
+                <p class="text-muted mt-2 mb-0 small">No tienes compras pendientes.</p>
             </div>
             {% endfor %}
         </div>
 
-        <div class="mt-5 d-grid gap-2">
-            <a href="{% url 'estadisticas' %}" class="btn btn-primary py-3 shadow-sm fw-bold"
-                style="border-radius: 15px;">
-                <i class="bi bi-bar-chart-fill me-2"></i> Ver Mis Estadísticas
+        <div class="mt-5">
+            <a href="{% url 'estadisticas' %}" class="btn btn-stats-dash w-100 py-3 shadow-sm fw-bold border-0 mb-3">
+                <i class="bi bi-graph-up-arrow me-2 text-primary"></i> VER MIS ESTADÍSTICAS
             </a>
-            <div class="d-flex gap-2">
-                <a href="{% url 'listas_archivadas' %}" class="btn btn-outline-secondary flex-grow-1 py-2 small" style="border-radius: 12px;">
-                    <i class="bi bi-archive me-1"></i> Historial
-                </a>
-                <a href="{% url 'gestionar_maestro' %}" class="btn btn-outline-secondary flex-grow-1 py-2 small" style="border-radius: 12px;">
-                    <i class="bi bi-database-fill me-1"></i> Diccionario
-                </a>
+            
+            <div class="row g-2 text-center">
+                <div class="col-4">
+                    <a href="{% url 'listas_archivadas' %}" class="text-decoration-none">
+                        <div class="p-3 bg-white shadow-sm rounded-4 mb-1">
+                            <i class="bi bi-calendar-check fs-4 text-primary"></i>
+                        </div>
+                        <small class="text-muted fw-bold small-caps">HISTORIAL</small>
+                    </a>
+                </div>
+                <div class="col-4">
+                    <a href="{% url 'gestionar_tiendas' %}" class="text-decoration-none">
+                        <div class="p-3 bg-white shadow-sm rounded-4 mb-1">
+                            <i class="bi bi-shop fs-4 text-primary"></i>
+                        </div>
+                        <small class="text-muted fw-bold small-caps">TIENDAS</small>
+                    </a>
+                </div>
+                <div class="col-4">
+                    <a href="{% url 'gestionar_maestro' %}" class="text-decoration-none">
+                        <div class="p-3 bg-white shadow-sm rounded-4 mb-1">
+                            <i class="bi bi-journal-text fs-4 text-primary"></i>
+                        </div>
+                        <small class="text-muted fw-bold small-caps">PRODUCTOS</small>
+                    </a>
+                </div>
             </div>
         </div>
 
-        <p class="text-center mt-4 mb-5">
-            <small class="text-muted">MarketList v1.0</small>
+        <p class="text-center mt-5 mb-5 opacity-50 footer-brand">
+            <small class="fw-bold text-uppercase">MarketList Smart Edition</small>
         </p>
 
     </div>
@@ -114,32 +129,30 @@
 
 <div class="modal fade" id="modalTienda" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0" style="border-radius: 28px;">
+        <div class="modal-content modal-tienda-dash border-0 shadow-lg">
             <div class="modal-header border-0 pt-4 px-4">
-                <h5 class="modal-title fw-bold">Nuevo Supermercado</h5>
+                <h5 class="modal-title fw-bold text-dark">Nuevo Supermercado</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form method="POST">
                 {% csrf_token %}
                 <div class="modal-body px-4 pb-4">
                     <div class="mb-4">
-                        <label class="form-label text-muted small fw-bold text-uppercase">Nombre</label>
-                        <input type="text" name="nombre_tienda" class="form-control form-control-lg border-0 bg-light"
-                            placeholder="Ej: Mercadona, Aldi..." style="border-radius: 12px;" required>
+                        <label class="form-label text-muted small fw-bold text-uppercase label-spacing">Nombre del súper</label>
+                        <input type="text" name="nombre_tienda" class="form-control form-control-lg border-0 bg-light input-tienda-name"
+                            placeholder="Ej: Lidl, Carrefour..." required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label text-muted small fw-bold text-uppercase">Color identificativo</label>
-                        <div class="d-flex align-items-center gap-3">
+                        <label class="form-label text-muted small fw-bold text-uppercase label-spacing">Color para identificarlo</label>
+                        <div class="d-flex align-items-center gap-3 bg-light p-3 rounded-4">
                             <input type="color" name="color_tienda"
-                                class="form-control form-control-color border-0 bg-light" value="#0d6efd"
-                                style="width: 60px; height: 50px; border-radius: 10px;">
-                            <small class="text-muted">Color para las tarjetas de lista</small>
+                                class="form-control form-control-color border-0 input-color-custom" value="#2d5a27">
+                            <small class="text-muted">Elige un color que te recuerde a la tienda</small>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer border-0 px-4 pb-4">
-                    <button type="submit" class="btn btn-primary w-100 py-3 shadow"
-                        style="border-radius: 16px; font-weight: 600;">Guardar Supermercado</button>
+                    <button type="submit" class="btn btn-primary w-100 py-3 shadow-sm btn-save-store">GUARDAR TIENDA</button>
                 </div>
             </form>
         </div>
