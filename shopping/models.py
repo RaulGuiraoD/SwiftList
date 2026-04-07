@@ -17,11 +17,11 @@ class MaestroProducto(models.Model):
     """ El 'cerebro'. Aquí se guarda todo lo que ella ha comprado alguna vez. """
     nombre = models.CharField(max_length=200, unique=True)
     tienda_habitual = models.ForeignKey(Tienda, on_delete=models.SET_NULL, null=True, blank=True)
-    precio_ultimo = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
     frecuencia_uso = models.PositiveIntegerField(default=0)
+    zona = models.CharField(max_length=100, default="General", help_text="Ej: Frutería, Carnicería, Limpieza")
 
     def __str__(self):
-        return self.nombre
+        return f"{self.nombre} ({self.zona})"
 
 class ListaCompra(models.Model):
     """ Representa una 'sesión' de compra: 'Compra Mercadona Martes' """

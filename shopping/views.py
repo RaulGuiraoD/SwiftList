@@ -68,16 +68,21 @@ def ver_lista(request, lista_id):
     
     if request.method == 'POST':
         nombre_prod = request.POST.get('nombre').strip().capitalize()
+        # Nota: asegúrate de que 'cantidad' esté en tu HTML o usa 1 por defecto
         cantidad = request.POST.get('cantidad', '1')
 
         if nombre_prod:
-            # 1. Buscar o crear en el Maestro (aquí es donde la app "aprende")
+            # 1. Buscar o crear en el Maestro
             producto_maestro, created = MaestroProducto.objects.get_or_create(
                 nombre=nombre_prod,
                 defaults={'tienda_habitual': lista.tienda}
             )
             
-            # 2. Añadirlo a la lista actual
+            # Si ya existía, podrías aumentar su frecuencia_uso aquí si tienes ese campo
+            # producto_maestro.frecuencia_uso += 1
+            # producto_maestro.save()
+            
+            # 2. Añadirlo a la lista actual (ItemLista)
             ItemLista.objects.create(
                 lista=lista,
                 producto_maestro=producto_maestro,
@@ -85,15 +90,16 @@ def ver_lista(request, lista_id):
             )
         return redirect('ver_lista', lista_id=lista.id)
 
-    # Obtenemos los items de esta lista
-    items = lista.items.all().order_by('comprado', '-id')
+    # Obtenemos los items de esta lista (usamos 'productos' para el HTML)
+    productos_en_lista = lista.items.all().order_by('comprado', 'producto_maestro__zona', 'producto_maestro__nombre')
     
-    # Obtenemos todos los nombres del maestro para el autocompletado
-    sugerencias = MaestroProducto.objects.all()
+    # Obtenemos los 10 productos más frecuentes para las sugerencias
+    # Si no tienes el campo frecuencia_uso, usa .all()[:10] por ahora
+    sugerencias = MaestroProducto.objects.filter(frecuencia_uso__gt=0).order_by('-frecuencia_uso')[:10]
 
     return render(request, 'shopping/lista_detalle.html', {
         'lista': lista,
-        'items': items,
+        'items': productos_en_lista, 
         'sugerencias': sugerencias
     })
 

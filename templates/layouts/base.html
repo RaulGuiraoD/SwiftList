@@ -1,14 +1,15 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{% block title %}MarketList{% endblock %}</title>
-    
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -16,6 +17,7 @@
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
+
 <body>
     <div class="container container-main py-4">
         {% block content %}
@@ -33,11 +35,24 @@
                     </div>
                     <h5 class="fw-bold mb-2">¿Confirmar borrado?</h5>
                     <p class="text-muted small px-2" id="deleteConfirmMessage">Esta acción no se puede deshacer.</p>
-                    
+
                     <div class="d-grid gap-2 mt-4">
-                        <button type="button" id="btnConfirmDelete" class="btn btn-danger-custom">ELIMINAR AHORA</button>
+                        <button type="button" id="btnConfirmDelete" class="btn btn-danger-custom">ELIMINAR
+                            AHORA</button>
                         <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">CANCELAR</button>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-3">
+        <div id="liveToast" class="toast align-items-center text-white border-0 shadow-lg" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex justify-content-center">
+                <div class="toast-body fw-bold text-uppercase label-spacing" id="toastMessage"
+                    style="font-size: 0.75rem;">
+                    Acción realizada correctamente
                 </div>
             </div>
         </div>
@@ -52,9 +67,15 @@
             const myModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
             myModal.show();
         }
-        document.getElementById('btnConfirmDelete').addEventListener('click', function() {
-            if (formToSubmit) formToSubmit.submit();
+        document.getElementById('btnConfirmDelete').addEventListener('click', function () {
+            if (formToSubmit) {
+                // Opcional: Ocultar el modal justo antes de enviar para dar fluidez
+                bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
+                formToSubmit.submit();
+            }
         });
     </script>
+    <script src="{% static 'js/base.js' %}"></script>
 </body>
+
 </html>

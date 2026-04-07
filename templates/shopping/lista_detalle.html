@@ -1,85 +1,129 @@
 {% extends 'layouts/base.html' %}
 {% load static %}
 
-{% block title %}{{ lista.tienda.nombre }}{% endblock %}
+{% block title %}{{ lista.tienda.nombre }} - MarketList{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-12 col-md-8 col-lg-6">
+    <div class="col-12 col-md-8 col-lg-6 text-center">
         
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <a href="{% url 'dashboard' %}" class="btn btn-light rounded-circle shadow-sm">‹</a>
-            <h4 class="fw-bold mb-0">{{ lista.tienda.nombre }}</h4>
-            <span class="badge rounded-pill shadow-sm" style="background-color: {{ lista.tienda.color_hex }}; width: 20px; height: 20px; border: 2px solid white;"> </span>
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <a href="{% url 'dashboard' %}" class="btn btn-light rounded-circle shadow-sm btn-back">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+            <div class="d-flex align-items-center gap-2">
+                <h4 class="fw-bold mb-0 text-uppercase label-spacing">{{ lista.tienda.nombre }}</h4>
+                <span class="badge rounded-circle shadow-sm" 
+                      style="background-color: {{ lista.tienda.color_hex }}; width: 12px; height: 12px; border: 2px solid white; display: inline-block;"> </span>
+            </div>
+            <div class="spacer-header"></div>
         </div>
 
         {% if lista.esta_finalizada %}
-            <div class="alert alert-success border-0 shadow-sm mb-4 text-center" style="border-radius: 15px; background-color: #d1e7dd66;">
-                <h6 class="fw-bold mb-1 text-success">✓ Compra finalizada</h6>
-                <p class="mb-0 small text-muted">
-                    Total pagado: <strong>{% if lista.total_ticket > 0 %}{{ lista.total_ticket }} €{% else %}No registrado{% endif %}</strong>
-                </p>
-            </div>
-        {% else %}
-            <form method="POST" class="mb-4">
-                {% csrf_token %}
-                <div class="input-group shadow-sm" style="border-radius: 15px; overflow: hidden;">
-                    <input type="text" name="nombre" class="form-control border-0 bg-white py-3 ps-4" 
-                           placeholder="Añadir producto..." list="productos-existentes" required autocomplete="off">
-                    
-                    <datalist id="productos-existentes">
-                        {% for sugerencia in sugerencias %}
-                            <option value="{{ sugerencia.nombre }}">
-                        {% endfor %}
-                    </datalist>
-
-                    <button type="submit" class="btn btn-primary px-4">
-                        <b class="fs-5">+</b>
-                    </button>
+            <section class="section-gap">
+                <div class="alert border-0 shadow-sm mb-4 py-4 card-rounded" style="background-color: #f0fdf4;">
+                    <i class="bi bi-check-circle-fill text-success fs-2 d-block mb-2"></i>
+                    <h6 class="fw-bold mb-1 text-success text-uppercase label-spacing">Compra finalizada</h6>
+                    <p class="mb-0 small text-muted">
+                        Total pagado: <strong>{% if lista.total_ticket > 0 %}{{ lista.total_ticket }} €{% else %}No registrado{% endif %}</strong>
+                    </p>
                 </div>
-            </form>
+            </section>
+        {% else %}
+            <section class="section-gap">
+                <form method="POST" id="formAdd">
+                    {% csrf_token %}
+                    <div class="input-group shadow-sm border-0 input-group-rounded mb-2">
+                        <input type="text" name="nombre" class="form-control form-control-lg border-0 px-4 input-add-item" 
+                               placeholder="Añadir producto..." list="productos-existentes" required autocomplete="off" id="inputProducto">
+                        
+                        <datalist id="productos-existentes">
+                            {% for sugerencia in sugerencias %}
+                                <option value="{{ sugerencia.nombre }}">
+                            {% endfor %}
+                        </datalist>
+
+                        <button type="submit" class="btn btn-primary px-4 btn-add-icon">
+                            <i class="bi bi-plus-lg"></i>
+                        </button>
+                    </div>
+                    
+                    <button type="button" class="btn btn-link text-decoration-none text-primary fw-bold label-spacing" 
+                            style="font-size: 0.7rem;" data-bs-toggle="collapse" data-bs-target="#panelSugerencias">
+                        <i class="bi bi-stars me-1"></i> VER PRODUCTOS FRECUENTES
+                    </button>
+
+                    <div class="collapse mt-3" id="panelSugerencias">
+                        <div class="d-flex flex-wrap gap-2 justify-content-center p-3 bg-light rounded-4">
+                            {% for sug in sugerencias %}
+                            <button type="button" class="btn btn-white btn-sm shadow-sm border-0 px-3 py-2 btn-tag-sugerencia"
+                                    onclick="addFromSugerencia('{{ sug.nombre }}')">
+                                {{ sug.nombre }}
+                            </button>
+                            {% empty %}
+                            <small class="text-muted">Aún no tienes productos frecuentes</small>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </form>
+            </section>
         {% endif %}
 
-        <div class="list-group list-group-flush shadow-sm rounded-4 overflow-hidden mb-4">
-            {% for item in items %}
-                <div class="list-group-item d-flex align-items-center py-3 {% if item.comprado %}bg-light opacity-75{% endif %}">
+        <section class="section-gap">
+            <div class="list-group list-group-flush gap-2">
+                {% for item in items %}
                     
-                    {% if not lista.esta_finalizada %}
-                        <a href="{% url 'completar_item' item.id %}" class="btn border-0 me-3 p-0">
-                            {% if item.comprado %}
-                                <span class="fs-4 text-success">●</span>
+                    {# SEPARADOR DE ZONA #}
+                    {% ifchanged item.producto_maestro.zona %}
+                        <div class="text-start ps-2 mb-2 mt-4">
+                            <small class="fw-bold text-muted text-uppercase" style="letter-spacing: 1.5px; font-size: 0.65rem;">
+                                <i class="bi bi-geo-alt me-1"></i> {{ item.producto_maestro.get_zona_display|default:item.producto_maestro.zona }}
+                            </small>
+                        </div>
+                    {% endifchanged %}
+
+                    <div class="list-group-item d-flex align-items-center border-0 shadow-sm item-producto-lista {% if item.comprado %}item-muted{% endif %}">
+                        
+                        <div class="me-3">
+                            {% if not lista.esta_finalizada %}
+                                <a href="{% url 'completar_item' item.id %}" class="btn-action-check {% if item.comprado %}btn-checked{% else %}btn-outline-check{% endif %} text-decoration-none">
+                                    <i class="bi {% if item.comprado %}bi-check-lg{% else %}bi-circle{% endif %}"></i>
+                                </a>
                             {% else %}
-                                <span class="fs-4 text-muted">○</span>
+                                <div class="btn-action-check {% if item.comprado %}btn-checked{% else %}btn-outline-check{% endif %} opacity-50">
+                                    <i class="bi {% if item.comprado %}bi-check-lg{% else %}bi-circle{% endif %}"></i>
+                                </div>
                             {% endif %}
-                        </a>
-                    {% else %}
-                        <span class="fs-4 me-3 {% if item.comprado %}text-success{% else %}text-muted{% endif %}">
-                            {% if item.comprado %}●{% else %}○{% endif %}
-                        </span>
-                    {% endif %}
+                        </div>
 
-                    <div class="flex-grow-1">
-                        <span class="fs-5 {% if item.comprado %}text-decoration-line-through text-muted{% endif %}">
-                            {{ item.producto_maestro.nombre }}
-                        </span>
+                        <div class="flex-grow-1 text-start">
+                            <span class="fs-5 fw-semibold {% if item.comprado %}text-decoration-line-through opacity-50 text-muted{% endif %}">
+                                {{ item.producto_maestro.nombre }}
+                            </span>
+                        </div>
+
+                        {% if not lista.esta_finalizada %}
+                            <a href="{% url 'eliminar_item' item.id %}" class="btn-action-delete ms-2 text-decoration-none">
+                                <i class="bi bi-x-lg"></i>
+                            </a>
+                        {% endif %}
                     </div>
-
-                    {% if not lista.esta_finalizada %}
-                        <a href="{% url 'eliminar_item' item.id %}" class="btn text-danger opacity-25">✕</a>
-                    {% endif %}
-                </div>
-            {% empty %}
-                <div class="list-group-item text-center py-5 text-muted bg-white">
-                    <p class="mb-0">No hay productos en la lista.</p>
-                </div>
-            {% endfor %}
-        </div>
+                {% empty %}
+                    <div class="card border-0 shadow-sm py-5 card-rounded">
+                        <div class="card-body">
+                            <i class="bi bi-cart-x text-muted opacity-25 fs-1 d-block mb-3"></i>
+                            <p class="text-muted mb-0">No hay productos en la lista</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
 
         {% if not lista.esta_finalizada and items %}
             <div class="mt-5 mb-5 d-grid">
-                <button type="button" class="btn btn-dark py-3 fw-bold shadow-lg" 
-                        style="border-radius: 15px;" data-bs-toggle="modal" data-bs-target="#modalFinalizar">
-                    Finalizar y Guardar Ticket
+                <button type="button" class="btn btn-dark py-3 fw-bold shadow-lg text-uppercase label-spacing" 
+                        style="border-radius: 18px;" data-bs-toggle="modal" data-bs-target="#modalFinalizar">
+                    Finalizar compra
                 </button>
             </div>
         {% endif %}
@@ -88,31 +132,30 @@
 </div>
 
 <div class="modal fade" id="modalFinalizar" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0" style="border-radius: 25px;">
-            <div class="modal-header border-0 pt-4 px-4">
-                <h5 class="modal-title fw-bold">🛒 Resumen de compra</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 card-rounded">
+            <div class="modal-header border-0 pt-4 px-4 justify-content-center">
+                <h5 class="modal-title fw-bold text-uppercase label-spacing" style="font-size: 0.9rem;">Resumen de compra</h5>
             </div>
             <form method="POST" action="{% url 'finalizar_compra' lista.id %}">
                 {% csrf_token %}
                 <div class="modal-body px-4 text-center">
-                    <p class="text-muted">Vas a cerrar la compra de <b>{{ lista.tienda.nombre }}</b>.</p>
+                    <p class="text-muted small">¿Cuánto has pagado en <b>{{ lista.tienda.nombre }}</b>?</p>
                     <div class="mb-3 mt-4">
-                        <label class="form-label small fw-bold text-muted text-uppercase">¿Cuánto has pagado? (Opcional)</label>
-                        <div class="input-group input-group-lg shadow-sm rounded-3 overflow-hidden">
-                            <span class="input-group-text border-0 bg-light">€</span>
+                        <div class="input-group input-group-lg shadow-sm rounded-3 overflow-hidden border">
+                            <span class="input-group-text border-0 bg-white text-muted">€</span>
                             <input type="number" step="0.01" name="total_ticket" 
-                                   class="form-control border-0 bg-light text-center fw-bold" 
+                                   class="form-control border-0 text-center fw-bold" 
                                    placeholder="0.00">
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer border-0 px-4 pb-4">
-                    <button type="submit" class="btn btn-success w-100 py-3 shadow" 
-                            style="border-radius: 15px; font-weight: 600;">
-                        Cerrar Lista
+                    <button type="submit" class="btn btn-primary w-100 py-3 shadow-sm fw-bold text-uppercase label-spacing" 
+                            style="border-radius: 15px; font-size: 0.8rem;">
+                        Guardar y Cerrar
                     </button>
+                    <button type="button" class="btn btn-link w-100 text-muted text-decoration-none small" data-bs-dismiss="modal">CANCELAR</button>
                 </div>
             </form>
         </div>

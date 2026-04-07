@@ -6,21 +6,40 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-12 col-md-8 col-lg-6 text-center">
-        
+
         <header class="mb-5">
             <h2 class="fw-bold text-dark text-uppercase label-spacing">Lista de compra</h2>
             <div class="divider-stats my-3"></div>
         </header>
 
         <section class="section-gap">
-            <form method="POST">
+            <form method="POST" id="formAdd">
                 {% csrf_token %}
-                <div class="input-group shadow-sm border-0 input-group-rounded">
+                <div class="input-group shadow-sm border-0 input-group-rounded mb-2">
                     <input type="text" name="nombre" class="form-control form-control-lg border-0 px-4 input-add-item"
-                        placeholder="Añadir nuevo producto..." required autofocus>
+                        placeholder="Añadir nuevo producto..." required id="inputProducto">
                     <button class="btn btn-primary px-4 btn-add-icon" type="submit">
                         <i class="bi bi-plus-lg"></i>
                     </button>
+                </div>
+
+                <button type="button" class="btn btn-link text-decoration-none text-primary fw-bold label-spacing"
+                    style="font-size: 0.7rem;" data-bs-toggle="collapse" data-bs-target="#panelSugerencias">
+                    <i class="bi bi-stars me-1"></i> VER PRODUCTOS FRECUENTES
+                </button>
+
+                <div class="collapse mt-3" id="panelSugerencias">
+                    <div class="d-flex flex-wrap gap-2 justify-content-center p-3 bg-light rounded-4">
+                        {% for sug in sugerencias %}
+                        <button type="button"
+                            class="btn btn-white btn-sm shadow-sm border-0 px-3 py-2 btn-tag-sugerencia"
+                            onclick="addFromSugerencia('{{ sug.nombre }}')">
+                            {{ sug.nombre }}
+                        </button>
+                        {% empty %}
+                        <small class="text-muted">Aún no tienes productos frecuentes</small>
+                        {% endfor %}
+                    </div>
                 </div>
             </form>
         </section>
@@ -28,9 +47,11 @@
         <section class="section-gap">
             <div class="list-group list-group-flush gap-2">
                 {% for producto in productos %}
-                <div class="list-group-item d-flex align-items-center border-0 shadow-sm item-producto-lista {% if producto.completado %}item-muted{% endif %}">
+                <div
+                    class="list-group-item d-flex align-items-center border-0 shadow-sm item-producto-lista {% if producto.completado %}item-muted{% endif %}">
                     <div class="flex-grow-1 text-start">
-                        <span class="fs-5 fw-semibold {% if producto.completado %}text-decoration-line-through opacity-50{% endif %}">
+                        <span
+                            class="fs-5 fw-semibold {% if producto.completado %}text-decoration-line-through opacity-50{% endif %}">
                             {{ producto.nombre }}
                         </span>
                     </div>
@@ -57,7 +78,8 @@
         </section>
 
         <div class="mt-4">
-             <a href="{% url 'dashboard' %}" class="btn btn-cancel text-uppercase fw-bold label-spacing">Volver al panel</a>
+            <a href="{% url 'dashboard' %}" class="btn btn-cancel text-uppercase fw-bold label-spacing">Volver al
+                panel</a>
         </div>
 
     </div>

@@ -17,6 +17,19 @@ body {
 
 .container-main { max-width: 600px; }
 
+/* --- Estilos para Avisos (Toasts) --- */
+.toast {
+    background: var(--primary-green) !important;
+    border-radius: 50px !important; /* Estilo píldora */
+    padding: 5px 20px;
+    min-width: 200px;
+    margin-bottom: 40px !important; /* Separado del borde inferior */
+}
+
+.toast.bg-danger-custom {
+    background: var(--danger-red) !important;
+}
+
 /* Botones */
 .btn-primary { 
     background-color: var(--primary-green) !important; 
@@ -335,6 +348,22 @@ body {
 .completado {
     text-decoration: line-through;
     opacity: 0.6;
+}
+
+/* --- Estilos Sugerencias --- */
+.btn-tag-sugerencia {
+    background: white;
+    color: var(--text-dark);
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-tag-sugerencia:hover {
+    background: var(--primary-green-light);
+    color: var(--primary-green);
+    transform: translateY(-2px);
 }
 
 /* --- Estilos del Historial --- */
