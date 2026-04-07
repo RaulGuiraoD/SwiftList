@@ -1,4 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db import models 
+from django.db.models import Sum, Count, Q
+from django.utils import timezone
 from .models import Tienda, ListaCompra, MaestroProducto, ItemLista
 
 def dashboard(request):
@@ -114,3 +117,55 @@ def reabrir_lista(request, lista_id):
     lista.total_ticket = 0
     lista.save()
     return redirect('ver_lista', lista_id=lista.id)
+
+def estadisticas(request):
+    # 1. Gasto Total Histórico
+    gasto_total = ListaCompra.objects.filter(esta_finalizada=True).aggregate(Sum('total_ticket'))['total_ticket__sum'] or 0
+
+    # 2. Gasto este mes
+    mes_actual = timezone.now().month
+    gasto_mes = ListaCompra.objects.filter(
+        esta_finalizada=True, 
+        fecha_creacion__month=mes_actual
+    ).aggregate(Sum('total_ticket'))['total_ticket__sum'] or 0
+
+    # 3. Top Productos (Los 5 más frecuentes)
+    top_productos = MaestroProducto.objects.filter(frecuencia_uso__gt=0).order_by('-frecuencia_uso')[:5]
+
+    # 4. Gasto por Tienda (Cambiado 'listas' por 'listacompra')
+    tiendas_stats = Tienda.objects.annotate(
+        total_gastado=Sum('listacompra__total_ticket', filter=Q(listacompra__esta_finalizada=True)),
+        num_visitas=Count('listacompra', filter=Q(listacompra__esta_finalizada=True))
+    ).filter(num_visitas__gt=0).order_by('-total_gastado')
+
+    context = {
+        'gasto_total': gasto_total,
+        'gasto_mes': gasto_mes,
+        'top_productos': top_productos,
+        'tiendas_stats': tiendas_stats,
+    }
+    return render(request, 'shopping/estadisticas.html', context)
+
+
+def eliminar_lista(request, lista_id):
+    lista = get_object_or_404(ListaCompra, id=lista_id)
+    # Solo permitimos borrar si no está finalizada (por seguridad)
+    if not lista.esta_finalizada:
+        lista.delete()
+    return redirect('dashboard')
+
+def gestionar_maestro(request):
+    # Ver todos los productos ordenados alfabéticamente
+    productos = MaestroProducto.objects.all().order_by('nombre')
+    
+    # Buscador simple por si tiene muchos
+    query = request.GET.get('q')
+    if query:
+        productos = productos.filter(nombre__icontains=query)
+        
+    return render(request, 'shopping/gestionar_maestro.html', {'productos': productos})
+
+def eliminar_producto_maestro(request, producto_id):
+    producto = get_object_or_404(MaestroProducto, id=producto_id)
+    producto.delete()
+    return redirect('gestionar_maestro')
