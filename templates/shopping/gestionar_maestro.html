@@ -6,55 +6,102 @@
 <div class="row justify-content-center">
     <div class="col-12 col-md-8 col-lg-6 text-center">
         
-        <div class="d-flex justify-content-between align-items-center mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
             <a href="{% url 'dashboard' %}" class="btn btn-light rounded-circle shadow-sm btn-back">
                 <i class="bi bi-chevron-left"></i>
             </a>
-            <h4 class="fw-bold mb-0 text-uppercase label-spacing">Catálogo de productos</h4>
+            <h4 class="fw-bold mb-0 text-uppercase label-spacing">Catálogo</h4>
             <div class="spacer-header"></div>
         </div>
 
-        <section class="section-gap">
-            <form method="GET" class="mb-2">
+        <section class="mb-4">
+            <form method="GET" class="mb-3">
                 <div class="position-relative">
                     <input type="text" name="q" class="form-control border-0 shadow-sm py-3 px-4 input-search-custom" 
-                           placeholder="Buscar en mis productos..." value="{{ request.GET.q|default:'' }}">
+                           placeholder="Buscar..." value="{{ request.GET.q|default:'' }}">
                     <i class="bi bi-search position-absolute end-0 top-50 translate-middle-y me-4 text-muted"></i>
                 </div>
             </form>
+            
+            <button type="button" id="btnEditMode" class="btn btn-white btn-sm rounded-pill px-4 shadow-sm border fw-bold text-uppercase" 
+                    style="font-size: 0.7rem; letter-spacing: 0.5px;" onclick="toggleEditMode()">
+                <i class="bi bi-pencil-square me-1 text-primary"></i> Seleccionar productos
+            </button>
         </section>
 
-        <section class="section-gap">
-            <div class="card border-0 shadow-sm overflow-hidden card-rounded">
-                <div class="list-group list-group-flush">
-                    {% for p in productos %}
-                    <div class="list-group-item d-flex justify-content-between align-items-center py-3 border-light px-4 text-start">
-                        <div>
-                            <span class="fw-bold text-dark d-block">{{ p.nombre }}</span>
-                            <small class="text-muted text-uppercase fw-bold label-frecuencia">
-                                Usado {{ p.frecuencia_uso }} veces
-                            </small>
+        <form id="formDeleteMultiple" method="POST" action="{% url 'eliminar_multiple_maestros' %}">
+            {% csrf_token %}
+            
+            <div id="selectionTools" class="d-none justify-content-between align-items-center mb-3 px-3">
+                <div class="form-check">
+                    <input class="form-check-input shadow-none" type="checkbox" id="selectAll" onclick="toggleAll(this)">
+                    <label class="form-check-label small fw-bold text-muted" for="selectAll">MARCAR TODOS</label>
+                </div>
+                <span id="countSelected" class="badge bg-primary rounded-pill">0</span>
+            </div>
+
+            <section class="section-gap pb-5">
+                <div class="card border-0 shadow-sm overflow-hidden card-rounded">
+                    <div class="list-group list-group-flush">
+                        {% for p in productos %}
+                        <div class="list-group-item d-flex align-items-center py-3 border-light px-4 text-start item-maestro" 
+                             onclick="handleItemClick(event, this)" data-id="{{ p.id }}">
+                            
+                            <div class="check-container d-none me-3">
+                                <input class="form-check-input producto-checkbox shadow-none" type="checkbox" 
+                                       name="productos_ids" value="{{ p.id }}" onclick="event.stopPropagation(); updateCount();">
+                            </div>
+
+                            <div class="flex-grow-1">
+                                <span class="fw-bold text-dark d-block">{{ p.nombre }}</span>
+                                <small class="text-muted text-uppercase fw-bold label-frecuencia" style="font-size: 0.65rem;">
+                                    Usado {{ p.frecuencia_uso }} veces
+                                </small>
+                            </div>
+                            
+                            <div class="individual-delete">
+                                <form method="POST" action="{% url 'eliminar_producto_maestro' p.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="button" class="btn btn-light text-danger rounded-pill border-0" 
+                                            onclick="confirmDelete(event, this, '¿Eliminar {{ p.nombre }}?')">
+                                        <i class="bi bi-trash3-fill"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
-                        
-                        <form method="POST" action="{% url 'eliminar_producto_maestro' p.id %}">
-                            {% csrf_token %}
-                            <button type="button" class="btn btn-delete-minimal" 
-                                    onclick="confirmDelete(event, this, '¿Eliminar {{ p.nombre }} de las sugerencias?')">
-                                <i class="bi bi-trash3"></i>
-                                <span class="ms-1">BORRAR</span>
-                            </button>
-                        </form>
+                        {% empty %}
+                        <div class="py-5 text-center">
+                            <i class="bi bi-box-seam text-muted opacity-25 fs-1 d-block mb-2"></i>
+                            <p class="text-muted mb-0 small">No hay productos</p>
+                        </div>
+                        {% endfor %}
                     </div>
-                    {% empty %}
-                    <div class="py-5">
-                        <i class="bi bi-box-seam text-muted opacity-25 fs-1 d-block mb-2"></i>
-                        <p class="text-muted mb-0 small">No se encontraron productos guardados</p>
-                    </div>
-                    {% endfor %}
+                </div>
+            </section>
+
+            <div id="floatingDeleteBar" class="fixed-bottom p-4 d-none col-12 col-md-8 col-lg-6 mx-auto" style="z-index: 1030;">
+                <button type="button" class="btn btn-danger w-100 py-3 fw-bold shadow-lg text-uppercase label-spacing" 
+                        style="border-radius: 18px;" onclick="showDeleteModal()">
+                    <i class="bi bi-trash3 me-2"></i> Eliminar seleccionados
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="modalConfirmMultiple" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 card-rounded shadow-lg">
+            <div class="modal-body p-4 text-center">
+                <i class="bi bi-exclamation-circle text-danger fs-1 mb-3 d-block"></i>
+                <h6 class="fw-bold text-uppercase mb-2">¿Estás seguro?</h6>
+                <p class="text-muted small mb-4">Vas a eliminar <span id="modalCount" class="fw-bold text-dark">0</span> productos de tu catálogo de sugerencias.</p>
+                <div class="d-grid gap-2">
+                    <button type="button" class="btn btn-danger py-2 fw-bold text-uppercase" style="border-radius: 12px; font-size: 0.75rem;" onclick="submitMultipleDelete()">Sí, eliminar</button>
+                    <button type="button" class="btn btn-light py-2 fw-bold text-uppercase text-muted" style="border-radius: 12px; font-size: 0.75rem;" data-bs-dismiss="modal">Cancelar</button>
                 </div>
             </div>
-        </section>
-
+        </div>
     </div>
 </div>
 {% endblock %}

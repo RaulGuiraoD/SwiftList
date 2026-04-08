@@ -86,3 +86,71 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('touchcancel', stopUpdating);
     });
 });
+
+
+let editMode = false;
+
+function toggleEditMode() {
+    editMode = !editMode;
+    const isEditing = editMode;
+    
+    document.getElementById('selectionTools').classList.toggle('d-none', !isEditing);
+    document.getElementById('floatingDeleteBar').classList.toggle('d-none', !isEditing);
+    
+    const btn = document.getElementById('btnEditMode');
+    btn.innerHTML = isEditing ? 
+        '<i class="bi bi-x-lg me-1 text-danger"></i> Cancelar' : 
+        '<i class="bi bi-pencil-square me-1 text-primary"></i> Seleccionar productos';
+
+    document.querySelectorAll('.check-container').forEach(el => el.classList.toggle('d-none', !isEditing));
+    document.querySelectorAll('.individual-delete').forEach(el => el.classList.toggle('d-none', isEditing));
+    
+    if (!isEditing) {
+        document.getElementById('selectAll').checked = false;
+        toggleAll(document.getElementById('selectAll'));
+    }
+}
+
+function handleItemClick(event, element) {
+    if (!editMode) return;
+    
+    // Evitamos que se dispare si el clic fue directamente en el checkbox
+    if (event.target.type !== 'checkbox') {
+        const cb = element.querySelector('.producto-checkbox');
+        cb.checked = !cb.checked;
+        updateCount();
+    }
+}
+
+function toggleAll(source) {
+    const checkboxes = document.querySelectorAll('.producto-checkbox');
+    checkboxes.forEach(cb => cb.checked = source.checked);
+    updateCount();
+}
+
+function updateCount() {
+    const checkedCount = document.querySelectorAll('.producto-checkbox:checked').length;
+    document.getElementById('countSelected').innerText = checkedCount;
+    document.querySelector('#floatingDeleteBar button').disabled = (checkedCount === 0);
+    
+    // Resaltar visualmente la fila seleccionada
+    document.querySelectorAll('.item-maestro').forEach(item => {
+        const cb = item.querySelector('.producto-checkbox');
+        if (cb.checked) {
+            item.style.backgroundColor = 'rgba(13, 110, 253, 0.05)';
+        } else {
+            item.style.backgroundColor = 'transparent';
+        }
+    });
+}
+
+function showDeleteModal() {
+    const checkedCount = document.querySelectorAll('.producto-checkbox:checked').length;
+    document.getElementById('modalCount').innerText = checkedCount;
+    const modal = new bootstrap.Modal(document.getElementById('modalConfirmMultiple'));
+    modal.show();
+}
+
+function submitMultipleDelete() {
+    document.getElementById('formDeleteMultiple').submit();
+}

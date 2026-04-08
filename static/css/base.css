@@ -421,3 +421,26 @@ body {
     transform: scale(1.3);
     color: var(--bs-primary) !important;
 }
+
+.item-maestro {
+    cursor: default;
+    transition: all 0.2s ease;
+    user-select: none; /* Evita que se seleccione el texto al hacer muchos clics */
+}
+
+/* Solo mostramos cursor de mano cuando estamos en modo edición */
+#selectionTools:not(.d-none) ~ .section-gap .item-maestro {
+    cursor: pointer;
+}
+
+#btnEditMode {
+    transition: transform 0.1s active;
+}
+
+#btnEditMode:active {
+    transform: scale(0.95);
+}
+
+.producto-checkbox {
+    pointer-events: auto; /* Permite clics directos en el check */
+}

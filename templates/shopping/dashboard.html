@@ -71,7 +71,7 @@
 
                         <form method="POST" action="{% url 'eliminar_lista' lista.id %}">
                             {% csrf_token %}
-                            <button type="button" class="btn btn-link text-danger opacity-25 px-2 text-decoration-none" 
+                            <button type="button" class="btn btn-link text-danger opacity-15 px-2 text-decoration-none" 
                                     onclick="confirmDelete(event, this, '¿Borrar lista de {{ lista.tienda.nombre }}?')">
                                 <i class="bi bi-x-circle-fill fs-4"></i>
                             </button>

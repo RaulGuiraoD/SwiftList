@@ -162,8 +162,8 @@
 
                         {% if not lista.esta_finalizada %}
                             <a href="{% url 'eliminar_item' item.id %}?orden={{ orden_actual }}" 
-                            class="btn-action-delete ms-1 text-decoration-none">
-                                <i class="bi bi-x-lg" style="font-size: 0.8rem;"></i>
+                            class="btn btn-link text-danger opacity-15 px-2 text-decoration-none">
+                                <i class="bi bi-x-circle-fill fs-4" style="font-size: 0.8rem;"></i>
                             </a>
                         {% endif %}
                     </div>

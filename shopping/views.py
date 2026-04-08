@@ -273,6 +273,13 @@ def eliminar_producto_maestro(request, producto_id):
     producto.delete()
     return redirect('gestionar_maestro')
 
+def eliminar_multiple_maestros(request):
+    if request.method == 'POST':
+        ids_a_borrar = request.POST.getlist('productos_ids')
+        if ids_a_borrar:
+            MaestroProducto.objects.filter(id__in=ids_a_borrar).delete()
+    return redirect('gestionar_maestro')
+
 def categorizar_mercadona(nombre_prod):
     nombre = nombre_prod.lower()
     
