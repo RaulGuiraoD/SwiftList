@@ -7,7 +7,7 @@
 <div class="row justify-content-center">
     <div class="col-12 col-md-8 col-lg-6 text-center">
         
-        <div class="d-flex justify-content-between align-items-center mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
             <a href="{% url 'dashboard' %}" class="btn btn-light rounded-circle shadow-sm btn-back">
                 <i class="bi bi-chevron-left"></i>
             </a>
@@ -21,21 +21,21 @@
 
         {% if lista.esta_finalizada %}
             <section class="section-gap">
-                <div class="alert border-0 shadow-sm mb-4 py-4 card-rounded" style="background-color: #f0fdf4;">
-                    <i class="bi bi-check-circle-fill text-success fs-2 d-block mb-2"></i>
-                    <h6 class="fw-bold mb-1 text-success text-uppercase label-spacing">Compra finalizada</h6>
+                <div class="alert border-0 shadow-sm mb-4 py-3 card-rounded" style="background-color: #f0fdf4;">
+                    <i class="bi bi-check-circle-fill text-success fs-4 d-block mb-1"></i>
+                    <h6 class="fw-bold mb-1 text-success text-uppercase label-spacing" style="font-size: 0.75rem;">Compra finalizada</h6>
                     <p class="mb-0 small text-muted">
-                        Total pagado: <strong>{% if lista.total_ticket > 0 %}{{ lista.total_ticket }} €{% else %}No registrado{% endif %}</strong>
+                        Total: <strong>{% if lista.total_ticket > 0 %}{{ lista.total_ticket }} €{% else %}No registrado{% endif %}</strong>
                     </p>
                 </div>
             </section>
         {% else %}
-            <section class="section-gap">
+            <section class="mb-4">
                 <form method="POST" id="formAdd">
                     {% csrf_token %}
                     <div class="input-group shadow-sm border-0 input-group-rounded mb-2">
-                        <input type="text" name="nombre" class="form-control form-control-lg border-0 px-4 input-add-item" 
-                               placeholder="Añadir producto..." list="productos-existentes" required autocomplete="off" id="inputProducto">
+                        <input type="text" name="nombre" class="form-control border-0 px-4 input-add-item" 
+                               placeholder="Añadir producto..." list="productos-existentes" required autocomplete="off">
                         
                         <datalist id="productos-existentes">
                             {% for sugerencia in sugerencias %}
@@ -43,25 +43,23 @@
                             {% endfor %}
                         </datalist>
 
-                        <button type="submit" class="btn btn-primary px-4 btn-add-icon">
+                        <button type="submit" class="btn btn-primary px-4">
                             <i class="bi bi-plus-lg"></i>
                         </button>
                     </div>
                     
                     <button type="button" class="btn btn-link text-decoration-none text-primary fw-bold label-spacing" 
-                            style="font-size: 0.7rem;" data-bs-toggle="collapse" data-bs-target="#panelSugerencias">
-                        <i class="bi bi-stars me-1"></i> VER PRODUCTOS FRECUENTES
+                            style="font-size: 0.65rem;" data-bs-toggle="collapse" data-bs-target="#panelSugerencias">
+                        <i class="bi bi-stars me-1"></i> VER FRECUENTES
                     </button>
 
-                    <div class="collapse mt-3" id="panelSugerencias">
-                        <div class="d-flex flex-wrap gap-2 justify-content-center p-3 bg-light rounded-4">
+                    <div class="collapse mt-2" id="panelSugerencias">
+                        <div class="d-flex flex-wrap gap-2 justify-content-center p-2 bg-light rounded-4">
                             {% for sug in sugerencias %}
-                            <button type="button" class="btn btn-white btn-sm shadow-sm border-0 px-3 py-2 btn-tag-sugerencia"
-                                    onclick="addFromSugerencia('{{ sug.nombre }}')">
+                            <button type="button" class="btn btn-white btn-sm shadow-sm border-0 px-3 py-1 btn-tag-sugerencia"
+                                    style="font-size: 0.75rem;" onclick="addFromSugerencia('{{ sug.nombre }}')">
                                 {{ sug.nombre }}
                             </button>
-                            {% empty %}
-                            <small class="text-muted">Aún no tienes productos frecuentes</small>
                             {% endfor %}
                         </div>
                     </div>
@@ -69,20 +67,18 @@
             </section>
         {% endif %}
 
-        <section class="section-gap">
-            <div class="list-group list-group-flush gap-2">
+        <section class="mb-5">
+            <div class="list-group list-group-flush"> 
                 {% for item in items %}
                     
-                    {# SEPARADOR DE ZONA #}
+                    {# ESPACIADOR VISUAL ENTRE ZONAS (Sin texto redundante) #}
                     {% ifchanged item.producto_maestro.zona %}
-                        <div class="text-start ps-2 mb-2 mt-4">
-                            <small class="fw-bold text-muted text-uppercase" style="letter-spacing: 1.5px; font-size: 0.65rem;">
-                                <i class="bi bi-geo-alt me-1"></i> {{ item.producto_maestro.get_zona_display|default:item.producto_maestro.zona }}
-                            </small>
-                        </div>
+                        {% if not forloop.first %}
+                            <div class="py-2"><hr class="my-1 opacity-25"></div>
+                        {% endif %}
                     {% endifchanged %}
 
-                    <div class="list-group-item d-flex align-items-center border-0 shadow-sm item-producto-lista {% if item.comprado %}item-muted{% endif %} mb-2">
+                    <div class="list-group-item d-flex align-items-center border-0 shadow-sm item-producto-lista {% if item.comprado %}item-muted{% endif %} mb-1 py-2 px-3" style="border-radius: 15px;">
                         
                         <div class="me-3">
                             {% if not lista.esta_finalizada %}
@@ -97,53 +93,55 @@
                         </div>
 
                         <div class="flex-grow-1 text-start">
-                            <span class="fs-5 fw-semibold {% if item.comprado %}text-decoration-line-through opacity-50 text-muted{% endif %}">
+                            <span class="fw-semibold d-block {% if item.comprado %}text-decoration-line-through opacity-50 text-muted{% endif %}" style="font-size: 0.95rem; line-height: 1.1;">
                                 {{ item.producto_maestro.nombre }}
                             </span>
+                            <small class="text-uppercase fw-bold text-primary" style="font-size: 0.55rem; letter-spacing: 0.5px; opacity: 0.8;">
+                                {{ item.producto_maestro.zona }}
+                            </small>
                         </div>
 
-                        <div class="d-flex align-items-center bg-light rounded-pill px-2 me-2 border shadow-sm" style="height: 38px;">
+                        <div class="d-flex align-items-center bg-light rounded-pill px-2 me-2 border shadow-sm" style="height: 32px;">
                             {% if not lista.esta_finalizada %}
-                                <a href="{% url 'cambiar_cantidad' item.id 'restar' %}" class="btn btn-sm text-primary p-0 px-1">
-                                    <i class="bi bi-dash-circle-fill fs-5"></i>
+                                <a href="{% url 'cambiar_cantidad' item.id 'restar' %}" class="btn btn-sm text-primary p-0">
+                                    <i class="bi bi-dash-circle-fill fs-6"></i>
                                 </a>
                             {% endif %}
                             
-                            <span class="mx-2 fw-bold text-dark" style="min-width: 20px; font-size: 0.9rem;">
+                            <span class="mx-2 fw-bold text-dark" style="min-width: 15px; font-size: 0.8rem;">
                                 {{ item.cantidad }}
                             </span>
 
                             {% if not lista.esta_finalizada %}
-                                <a href="{% url 'cambiar_cantidad' item.id 'sumar' %}" class="btn btn-sm text-primary p-0 px-1">
-                                    <i class="bi bi-plus-circle-fill fs-5"></i>
+                                <a href="{% url 'cambiar_cantidad' item.id 'sumar' %}" class="btn btn-sm text-primary p-0">
+                                    <i class="bi bi-plus-circle-fill fs-6"></i>
                                 </a>
                             {% endif %}
                         </div>
 
                         {% if not lista.esta_finalizada %}
                             <a href="{% url 'eliminar_item' item.id %}" class="btn-action-delete ms-1 text-decoration-none">
-                                <i class="bi bi-x-lg"></i>
+                                <i class="bi bi-x-lg" style="font-size: 0.8rem;"></i>
                             </a>
                         {% endif %}
                     </div>
                 {% empty %}
-                    <div class="card border-0 shadow-sm py-5 card-rounded">
-                        <div class="card-body">
-                            <i class="bi bi-cart-x text-muted opacity-25 fs-1 d-block mb-3"></i>
-                            <p class="text-muted mb-0">No hay productos en la lista</p>
-                        </div>
+                    <div class="py-5">
+                        <i class="bi bi-cart-x text-muted opacity-25 fs-1 d-block mb-2"></i>
+                        <p class="text-muted small">Lista vacía</p>
                     </div>
                 {% endfor %}
             </div>
         </section>
 
         {% if not lista.esta_finalizada and items %}
-            <div class="mt-5 mb-5 d-grid">
+            <div class="fixed-bottom p-4 d-grid col-12 col-md-8 col-lg-6 mx-auto" style="background: linear-gradient(to top, white 70%, transparent);">
                 <button type="button" class="btn btn-dark py-3 fw-bold shadow-lg text-uppercase label-spacing" 
                         style="border-radius: 18px;" data-bs-toggle="modal" data-bs-target="#modalFinalizar">
                     Finalizar compra
                 </button>
             </div>
+            <div style="height: 100px;"></div>
         {% endif %}
     </div>
 </div>
@@ -152,27 +150,21 @@
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content border-0 card-rounded">
             <div class="modal-header border-0 pt-4 px-4 justify-content-center">
-                <h5 class="modal-title fw-bold text-uppercase label-spacing" style="font-size: 0.9rem;">Resumen de compra</h5>
+                <h5 class="modal-title fw-bold text-uppercase label-spacing" style="font-size: 0.8rem;">Resumen de pago</h5>
             </div>
             <form method="POST" action="{% url 'finalizar_compra' lista.id %}">
                 {% csrf_token %}
                 <div class="modal-body px-4 text-center">
-                    <p class="text-muted small">¿Cuánto has pagado en <b>{{ lista.tienda.nombre }}</b>?</p>
-                    <div class="mb-3 mt-4">
-                        <div class="input-group input-group-lg shadow-sm rounded-3 overflow-hidden border">
-                            <span class="input-group-text border-0 bg-white text-muted">€</span>
-                            <input type="number" step="0.01" name="total_ticket" 
-                                   class="form-control border-0 text-center fw-bold" 
-                                   placeholder="0.00">
-                        </div>
+                    <p class="text-muted small mb-4">Introduce el total del ticket</p>
+                    <div class="input-group input-group-lg shadow-sm rounded-3 overflow-hidden border">
+                        <span class="input-group-text border-0 bg-white text-muted">€</span>
+                        <input type="number" step="0.01" name="total_ticket" class="form-control border-0 text-center fw-bold" placeholder="0.00">
                     </div>
                 </div>
                 <div class="modal-footer border-0 px-4 pb-4">
-                    <button type="submit" class="btn btn-primary w-100 py-3 shadow-sm fw-bold text-uppercase label-spacing" 
-                            style="border-radius: 15px; font-size: 0.8rem;">
-                        Guardar y Cerrar
+                    <button type="submit" class="btn btn-primary w-100 py-3 shadow-sm fw-bold text-uppercase label-spacing" style="border-radius: 15px; font-size: 0.8rem;">
+                        CERRAR LISTA
                     </button>
-                    <button type="button" class="btn btn-link w-100 text-muted text-decoration-none small" data-bs-dismiss="modal">CANCELAR</button>
                 </div>
             </form>
         </div>

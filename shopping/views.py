@@ -76,25 +76,40 @@ def cambiar_cantidad(request, item_id, operacion):
 # En tu ver_lista actual, asegúrate de que el POST maneje enteros
 def ver_lista(request, lista_id):
     lista = get_object_or_404(ListaCompra, id=lista_id)
+    
     if request.method == 'POST':
         nombre_prod = request.POST.get('nombre').strip().capitalize()
-        # Si no viene cantidad o es texto, forzamos 1
         cantidad = request.POST.get('cantidad', 1)
-        
+
         if nombre_prod:
-            producto_maestro, _ = MaestroProducto.objects.get_or_create(
+            # 1. Intentamos buscarlo. Si no existe, lo creamos.
+            producto_maestro, created = MaestroProducto.objects.get_or_create(
                 nombre=nombre_prod,
                 defaults={'tienda_habitual': lista.tienda}
             )
+
+            # 2. Si es NUEVO (created es True), le asignamos la zona automáticamente
+            if created or producto_maestro.zona == "General":
+                nueva_zona = categorizar_mercadona(nombre_prod)
+                # Solo guardamos si el cerebro ha encontrado algo mejor que "General"
+                if nueva_zona != "General":
+                    producto_maestro.zona = nueva_zona
+                    producto_maestro.save()
+            
+            # 3. Añadir a la lista
             ItemLista.objects.create(
                 lista=lista,
                 producto_maestro=producto_maestro,
-                cantidad=int(cantidad) # Aseguramos entero
+                cantidad=int(cantidad)
             )
         return redirect('ver_lista', lista_id=lista.id)
     
     # ... resto de la lógica de la vista (mantenla igual) ...
-    items = lista.items.all().order_by('comprado', 'producto_maestro__zona')
+    items = lista.items.all().order_by(
+        'comprado', 
+        'producto_maestro__zona', 
+        'producto_maestro__nombre'
+    )
     return render(request, 'shopping/lista_detalle.html', {
         'lista': lista,
         'items': items,
@@ -216,3 +231,56 @@ def eliminar_producto_maestro(request, producto_id):
     producto = get_object_or_404(MaestroProducto, id=producto_id)
     producto.delete()
     return redirect('gestionar_maestro')
+
+def categorizar_mercadona(nombre):
+    nombre = nombre.lower()
+    
+    # Usamos "raíces" de palabras para captar plurales y diminutivos
+    categorias = {
+        'Frutería y Verdura': [
+            'patat', 'ceboll', 'ajo', 'lechug', 'tomat', 'platan', 'manzan', 'per', 
+            'frut', 'verdur', 'boniat', 'aguacat', 'limon', 'naranj', 'fres', 
+            'pimiento', 'calabaci', 'zanahori', 'seta', 'champi', 'uvas', 'piña'
+        ],
+        'Carnicería/Charcutería': [
+            'poll', 'terner', 'cerd', 'pav', 'jamon', 'lomo', 'embuti', 'chori', 
+            'salchich', 'morta', 'filet', 'hamburg', 'alit', 'carn', 'serra', 
+            'cocid', 'bacon', 'fuet', 'pancet', 'ques' # El queso suele estar cerca
+        ],
+        'Lácteos y Frío': [
+            'lech', 'yogur', 'cuajad', 'mantequill', 'kefir', 'batid', 'nat', 
+            'hummu', 'guacamol', 'gelatin', 'postr', 'bifidu', 'mozzarel', 'flan'
+        ],
+        'Congelados': [
+            'hielo', 'pizz', 'helad', 'nugget', 'croquet', 'varit', 'congelad', 'sorbet'
+        ],
+        'Panadería y Dulces': [
+            'pan', 'barr', 'hogaz', 'mold', 'croiss', 'napolitan', 'gallet', 
+            'bizcoch', 'magdalen', 'donut', 'tortit', 'pico', 'regaña', 'chocolat'
+        ],
+        'Despensa y Latas': [
+            'arroz', 'past', 'macarr', 'espague', 'fideo', 'harin', 'aceit', 
+            'vinagr', 'sal', 'azucar', 'legumbr', 'lentej', 'garbanz', 'alubi', 
+            'cald', 'especi', 'bot', 'conserv', 'atun', 'frit', 'maiz', 'miel'
+        ],
+        'Bebidas y Bodega': [
+            'agu', 'refresc', 'col', 'fant', 'cervez', 'vin', 'zum', 'energet', 
+            'isoton', 'tint', 'sidr', 'caser', 'tónica'
+        ],
+        'Limpieza e Higiene': [
+            'detergent', 'suaviz', 'lavavajill', 'lejia', 'fregasuel', 'limpia', 
+            'estropaj', 'bayet', 'papel', 'higieni', 'cocin', 'servillet', 
+            'champú', 'gel', 'desodor', 'dient', 'cepill', 'maquinill', 'pañal', 
+            'compres', 'toallit', 'jabon', 'suavi'
+        ],
+        'Mascotas': [
+            'perr', 'gat', 'pienso', 'mascot', 'aren', 'latit'
+        ],
+    }
+
+    # Comprobamos si la RAÍZ está dentro del NOMBRE
+    for zona, raices in categorias.items():
+        if any(raiz in nombre for raiz in raices):
+            return zona
+            
+    return "General"
