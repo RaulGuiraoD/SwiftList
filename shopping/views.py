@@ -4,6 +4,7 @@ from django.db.models import Sum, Count, Q
 from django.utils import timezone
 from .models import Tienda, ListaCompra, MaestroProducto, ItemLista
 from django.db.models.functions import TruncMonth
+from django.http import JsonResponse
 
 def dashboard(request):
     listas_abiertas = ListaCompra.objects.filter(esta_finalizada=False).order_by('-fecha_creacion')
@@ -66,11 +67,19 @@ def editar_tienda(request, tienda_id):
 
 def cambiar_cantidad(request, item_id, operacion):
     item = get_object_or_404(ItemLista, id=item_id)
+    
     if operacion == 'sumar':
         item.cantidad += 1
     elif operacion == 'restar' and item.cantidad > 1:
         item.cantidad -= 1
+    
     item.save()
+
+    # Si la petición es AJAX, respondemos con el nuevo dato
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'nueva_cantidad': item.cantidad})
+    
+    # Si no es AJAX (por si acaso), redirigimos como antes
     return redirect('ver_lista', lista_id=item.lista.id)
 
 # En tu ver_lista actual, asegúrate de que el POST maneje enteros
@@ -79,41 +88,52 @@ def ver_lista(request, lista_id):
     
     if request.method == 'POST':
         nombre_prod = request.POST.get('nombre').strip().capitalize()
-        cantidad = request.POST.get('cantidad', 1)
+        # Capturamos la cantidad, si no viene en el POST por defecto es 1
+        cantidad_input = int(request.POST.get('cantidad', 1))
 
         if nombre_prod:
-            # 1. Intentamos buscarlo. Si no existe, lo creamos.
+            # 1. Buscamos o creamos el producto en el Maestro
             producto_maestro, created = MaestroProducto.objects.get_or_create(
                 nombre=nombre_prod,
                 defaults={'tienda_habitual': lista.tienda}
             )
 
-            # 2. Si es NUEVO (created es True), le asignamos la zona automáticamente
+            # 2. Categorización automática (tu lógica inteligente)
             if created or producto_maestro.zona == "General":
                 nueva_zona = categorizar_mercadona(nombre_prod)
-                # Solo guardamos si el cerebro ha encontrado algo mejor que "General"
                 if nueva_zona != "General":
                     producto_maestro.zona = nueva_zona
                     producto_maestro.save()
             
-            # 3. Añadir a la lista
-            ItemLista.objects.create(
-                lista=lista,
-                producto_maestro=producto_maestro,
-                cantidad=int(cantidad)
-            )
+            # 3. LÓGICA ANTI-DUPLICADOS:
+            # Buscamos si el producto ya está en esta lista
+            item_existente = ItemLista.objects.filter(lista=lista, producto_maestro=producto_maestro).first()
+
+            if item_existente:
+                # Si ya existe, simplemente sumamos la cantidad
+                item_existente.cantidad += cantidad_input
+                item_existente.save()
+            else:
+                # Si no existe, lo creamos de cero
+                ItemLista.objects.create(
+                    lista=lista,
+                    producto_maestro=producto_maestro,
+                    cantidad=cantidad_input
+                )
+
         return redirect('ver_lista', lista_id=lista.id)
     
-    # ... resto de la lógica de la vista (mantenla igual) ...
+    # Ordenación de la lista para el renderizado
     items = lista.items.all().order_by(
         'comprado', 
         'producto_maestro__zona', 
         'producto_maestro__nombre'
     )
+    
     return render(request, 'shopping/lista_detalle.html', {
         'lista': lista,
         'items': items,
-        'sugerencias': MaestroProducto.objects.filter(frecuencia_uso__gt=0)[:10]
+        'sugerencias': MaestroProducto.objects.filter(frecuencia_uso__gt=0).order_by('-frecuencia_uso')[:10]
     })
 
 def completar_item(request, item_id):
@@ -144,7 +164,8 @@ def finalizar_compra(request, lista_id):
             except ValueError:
                 # Si mete texto raro por error, lo reseteamos a 0
                 lista.total_ticket = 0
-            
+                
+        lista.items.all().update(comprado=True)
         lista.esta_finalizada = True
         lista.fecha_finalizada = timezone.now()
         lista.save()

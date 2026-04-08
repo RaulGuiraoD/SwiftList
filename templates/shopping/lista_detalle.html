@@ -34,8 +34,10 @@
                 <form method="POST" id="formAdd">
                     {% csrf_token %}
                     <div class="input-group shadow-sm border-0 input-group-rounded mb-2">
-                        <input type="text" name="nombre" class="form-control border-0 px-4 input-add-item" 
-                               placeholder="Añadir producto..." list="productos-existentes" required autocomplete="off">
+                        <input type="text" name="nombre" id="inputProducto" 
+                            class="form-control border-0 px-4 input-add-item" 
+                            placeholder="Añadir producto..." list="productos-existentes" 
+                            required autocomplete="off">
                         
                         <datalist id="productos-existentes">
                             {% for sugerencia in sugerencias %}
@@ -103,17 +105,19 @@
 
                         <div class="d-flex align-items-center bg-light rounded-pill px-2 me-2 border shadow-sm" style="height: 32px;">
                             {% if not lista.esta_finalizada %}
-                                <a href="{% url 'cambiar_cantidad' item.id 'restar' %}" class="btn btn-sm text-primary p-0">
+                                <a href="#" class="btn btn-sm text-primary p-0 btn-cantidad" 
+                                data-url="{% url 'cambiar_cantidad' item.id 'restar' %}" data-item-id="{{ item.id }}">
                                     <i class="bi bi-dash-circle-fill fs-6"></i>
                                 </a>
                             {% endif %}
                             
-                            <span class="mx-2 fw-bold text-dark" style="min-width: 15px; font-size: 0.8rem;">
+                            <span class="mx-2 fw-bold text-dark" id="cantidad-{{ item.id }}" style="min-width: 15px; font-size: 0.8rem;">
                                 {{ item.cantidad }}
                             </span>
 
                             {% if not lista.esta_finalizada %}
-                                <a href="{% url 'cambiar_cantidad' item.id 'sumar' %}" class="btn btn-sm text-primary p-0">
+                                <a href="#" class="btn btn-sm text-primary p-0 btn-cantidad" 
+                                data-url="{% url 'cambiar_cantidad' item.id 'sumar' %}" data-item-id="{{ item.id }}">
                                     <i class="bi bi-plus-circle-fill fs-6"></i>
                                 </a>
                             {% endif %}

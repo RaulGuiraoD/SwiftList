@@ -8,22 +8,26 @@
     --danger-red: #ff4d4d;
 }
 
-body { 
-    background-color: var(--bg-warm); 
+body {
+    background-color: var(--bg-warm);
     color: var(--text-dark);
     font-family: 'Outfit', sans-serif;
     -webkit-font-smoothing: antialiased;
 }
 
-.container-main { max-width: 600px; }
+.container-main {
+    max-width: 600px;
+}
 
 /* --- Estilos para Avisos (Toasts) --- */
 .toast {
     background: var(--primary-green) !important;
-    border-radius: 50px !important; /* Estilo píldora */
+    border-radius: 50px !important;
+    /* Estilo píldora */
     padding: 5px 20px;
     min-width: 200px;
-    margin-bottom: 40px !important; /* Separado del borde inferior */
+    margin-bottom: 40px !important;
+    /* Separado del borde inferior */
 }
 
 .toast.bg-danger-custom {
@@ -31,8 +35,8 @@ body {
 }
 
 /* Botones */
-.btn-primary { 
-    background-color: var(--primary-green) !important; 
+.btn-primary {
+    background-color: var(--primary-green) !important;
     border: none !important;
     border-radius: 16px;
     font-weight: 600;
@@ -47,7 +51,8 @@ body {
 .btn-outline-primary:hover {
     background-color: var(--primary-green) !important;
     border-color: var(--primary-green) !important;
-    color: white !important; /* El texto pasa a blanco sobre el fondo verde */
+    color: white !important;
+    /* El texto pasa a blanco sobre el fondo verde */
 }
 
 .btn-danger-custom {
@@ -73,7 +78,8 @@ body {
     background-color: #ffffff;
 }
 
-.form-control, .form-select {
+.form-control,
+.form-select {
     background-color: #ffffff !important;
     border: 1px solid var(--card-border) !important;
     border-radius: 16px !important;
@@ -92,10 +98,13 @@ body {
 }
 
 /* Utilitarios */
-.text-primary { color: var(--primary-green) !important; }
-.bg-primary-subtle { 
-    background-color: var(--primary-green-light) !important; 
-    color: var(--primary-green) !important; 
+.text-primary {
+    color: var(--primary-green) !important;
+}
+
+.bg-primary-subtle {
+    background-color: var(--primary-green-light) !important;
+    color: var(--primary-green) !important;
 }
 
 /* --- Estilos extraídos del Dashboard --- */
@@ -250,7 +259,7 @@ body {
 }
 
 .input-search-custom:focus {
-    box-shadow: 0 8px 20px rgba(0,0,0,0.05) !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05) !important;
 }
 
 .label-frecuencia {
@@ -313,7 +322,8 @@ body {
 }
 
 /* Botones de acción */
-.btn-action-check, .btn-action-delete {
+.btn-action-check,
+.btn-action-delete {
     width: 42px;
     height: 42px;
     border-radius: 12px;
@@ -392,10 +402,22 @@ body {
 }
 
 .btn-reopen-historial {
-    background-color: #fff9e6 !important; /* Amarillo muy suave */
-    color: #856404 !important; /* Texto ocre para legibilidad */
+    background-color: #fff9e6 !important;
+    /* Amarillo muy suave */
+    color: #856404 !important;
+    /* Texto ocre para legibilidad */
 }
 
 .btn-reopen-historial:hover {
     background-color: #ffecb3 !important;
+}
+
+#cantidad- {
+    transition: transform 0.1s ease;
+}
+
+/* Para los spans de cantidad */
+.scale-up {
+    transform: scale(1.3);
+    color: var(--bs-primary) !important;
 }
