@@ -1,7 +1,13 @@
 from django.urls import path
+from django.contrib.auth import views as auth_views 
 from . import views
 
 urlpatterns = [
+    # Rutas de autenticación
+    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
+    path('registro/', views.registro, name='registro'), # <-- Añadimos el registro
+    
     path('', views.dashboard, name='dashboard'),
     path('lista/<int:lista_id>/', views.ver_lista, name='ver_lista'),
     path('item/completar/<int:item_id>/', views.completar_item, name='completar_item'),
