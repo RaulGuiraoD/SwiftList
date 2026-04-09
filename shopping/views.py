@@ -266,15 +266,28 @@ def finalizar_compra(request, lista_id):
 @login_required
 def listas_archivadas(request):
     # Solo las que están finalizadas, de la más reciente a la más antigua
-    listas = ListaCompra.objects.filter(usuario=request.user, esta_finalizada=True).order_by('-fecha_creacion')
+    listas = ListaCompra.objects.filter(usuario=request.user, esta_finalizada=True).order_by('-fecha_finalizada')
     return render(request, 'shopping/listas_archivadas.html', {'listas': listas})
 
 @login_required
 def reabrir_lista(request, lista_id):
     lista = get_object_or_404(ListaCompra, id=lista_id, usuario=request.user)
+    
+    # Solo descontamos si la lista realmente estaba cerrada
+    if lista.esta_finalizada:
+        # IMPORTANTE: Descontamos la frecuencia de los productos antes de abrirla
+        for item in lista.items.filter(comprado=True):
+            producto = item.producto_maestro
+            if producto.frecuencia_uso > 0:
+                producto.frecuencia_uso -= 1
+                producto.save()
+    
+    # Ahora sí, la marcamos como abierta
     lista.esta_finalizada = False
     lista.total_ticket = 0
+    # No tocamos lista.fecha_finalizada para que se mantenga la original al volver a cerrar
     lista.save()
+    
     return redirect('ver_lista', lista_id=lista.id)
 
 @login_required
