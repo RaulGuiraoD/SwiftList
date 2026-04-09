@@ -19,6 +19,28 @@ body {
     max-width: 600px;
 }
 
+.wrapper-auth {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    /* Centrado vertical */
+    justify-content: center;
+    padding: 24px;
+    /* Espacio lateral en móviles */
+    background-color: var(--bg-warm);
+}
+
+.auth-card-container {
+    width: 100%;
+    max-width: 400px;
+    /* Ancho máximo de móvil */
+}
+
+.auth-logo {
+    max-height: 90px;
+    width: auto;
+}
+
 /* --- Estilos para Avisos (Toasts) --- */
 .toast {
     background: var(--primary-green) !important;
@@ -294,8 +316,10 @@ body {
 /* Input de añadir */
 .input-group-rounded {
     background-color: white;
-    border-radius: 50px !important; /* Forma de cápsula */
-    padding: 4px; /* Crea el efecto de que el botón flota dentro */
+    border-radius: 50px !important;
+    /* Forma de cápsula */
+    padding: 4px;
+    /* Crea el efecto de que el botón flota dentro */
     overflow: hidden;
 }
 
@@ -306,28 +330,35 @@ body {
 }
 
 .input-add-item:focus {
-    box-shadow: none; /* Quitamos el brillo azul feo de Bootstrap */
+    box-shadow: none;
+    /* Quitamos el brillo azul feo de Bootstrap */
 }
 
 .btn-add-swift {
-    border-radius: 50px !important; /* Botón circular o muy redondeado */
-    width: 42px; /* Lo hacemos casi cuadrado para que sea un círculo */
+    border-radius: 50px !important;
+    /* Botón circular o muy redondeado */
+    width: 42px;
+    /* Lo hacemos casi cuadrado para que sea un círculo */
     height: 42px;
-    margin: 4px; /* Margen interno para que no toque los bordes del div */
+    margin: 4px;
+    /* Margen interno para que no toque los bordes del div */
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 !important; /* Reset de padding para centrar el icono */
+    padding: 0 !important;
+    /* Reset de padding para centrar el icono */
     transition: all 0.3s ease;
 }
 
 .btn-add-swift:active {
-    transform: scale(0.9); /* Efecto de pulsación */
+    transform: scale(0.9);
+    /* Efecto de pulsación */
 }
 
 .btn-add-swift i {
     font-size: 1.2rem;
-    -webkit-text-stroke: 1px; /* Hace el icono del + un pelín más grueso */
+    -webkit-text-stroke: 1px;
+    /* Hace el icono del + un pelín más grueso */
 }
 
 /* Items de la lista */
@@ -446,11 +477,12 @@ body {
 .item-maestro {
     cursor: default;
     transition: all 0.2s ease;
-    user-select: none; /* Evita que se seleccione el texto al hacer muchos clics */
+    user-select: none;
+    /* Evita que se seleccione el texto al hacer muchos clics */
 }
 
 /* Solo mostramos cursor de mano cuando estamos en modo edición */
-#selectionTools:not(.d-none) ~ .section-gap .item-maestro {
+#selectionTools:not(.d-none)~.section-gap .item-maestro {
     cursor: pointer;
 }
 
@@ -463,5 +495,6 @@ body {
 }
 
 .producto-checkbox {
-    pointer-events: auto; /* Permite clics directos en el check */
+    pointer-events: auto;
+    /* Permite clics directos en el check */
 }
