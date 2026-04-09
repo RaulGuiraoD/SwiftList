@@ -80,7 +80,7 @@
             </section>
 
             <div id="floatingDeleteBar" class="fixed-bottom p-4 d-none col-12 col-md-8 col-lg-6 mx-auto" style="z-index: 1030;">
-                <button type="button" class="btn btn-danger w-100 py-3 fw-bold shadow-lg text-uppercase label-spacing" 
+                <button type="button" class="btn btn-danger-custom w-100 py-3 fw-bold shadow-lg text-uppercase label-spacing" 
                         style="border-radius: 18px;" onclick="showDeleteModal()">
                     <i class="bi bi-trash3 me-2"></i> Eliminar seleccionados
                 </button>
@@ -93,11 +93,11 @@
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content border-0 card-rounded shadow-lg">
             <div class="modal-body p-4 text-center">
-                <i class="bi bi-exclamation-circle text-danger fs-1 mb-3 d-block"></i>
+                <i class="bi bi-exclamation-circle text-danger fs-1 mb-3 d-block" style="color: var(--danger-red);"></i>
                 <h6 class="fw-bold text-uppercase mb-2">¿Estás seguro?</h6>
                 <p class="text-muted small mb-4">Vas a eliminar <span id="modalCount" class="fw-bold text-dark">0</span> productos de tu catálogo de sugerencias.</p>
                 <div class="d-grid gap-2">
-                    <button type="button" class="btn btn-danger py-2 fw-bold text-uppercase" style="border-radius: 12px; font-size: 0.75rem;" onclick="submitMultipleDelete()">Sí, eliminar</button>
+                    <button type="button" class="btn btn-danger-custom py-2 fw-bold text-uppercase" style="border-radius: 12px; font-size: 0.75rem;" onclick="submitMultipleDelete()">Sí, eliminar</button>
                     <button type="button" class="btn btn-light py-2 fw-bold text-uppercase text-muted" style="border-radius: 12px; font-size: 0.75rem;" data-bs-dismiss="modal">Cancelar</button>
                 </div>
             </div>

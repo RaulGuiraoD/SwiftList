@@ -29,6 +29,14 @@ body {
     /* Espacio lateral en móviles */
     background-color: var(--bg-warm);
 }
+.bg-red {
+    background-color: #e11d48 !important; /* Un rojo moderno tipo Tailwind/Rose */
+}
+
+.bg-red:hover {
+    background-color: #be123c !important;
+    
+}
 
 .auth-card-container {
     width: 100%;
@@ -540,4 +548,19 @@ body {
 @keyframes shine-bar {
     0% { transform: translateX(-100%); }
     100% { transform: translateX(100%); }
+}
+
+/* Blindaje para el botón de eliminar del modal */
+.btn-danger-custom {
+    background-color: var(--danger-red) !important;
+    color: white !important;
+    border: none !important;
+}
+
+.btn-danger-custom:hover, 
+.btn-danger-custom:focus, 
+.btn-danger-custom:active {
+    background-color: #b91515 !important; /* Un rojo un pelín más oscuro */
+    color: white !important;               /* Aseguramos que el texto SIGA blanco */
+    
 }
