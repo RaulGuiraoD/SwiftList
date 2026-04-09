@@ -15,12 +15,42 @@
         </div>
 
         <section class="section-gap">
-            <div class="card card-stats-hero border-0 shadow-lg text-white" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);">
-                <div class="card-body py-5">
-                    <p class="mb-1 opacity-75 fw-bold text-uppercase label-stats" style="letter-spacing: 2px; font-size: 0.75rem;">Gasto en {{ mes_nombre }}</p>
-                    <h1 class="display-3 fw-bold mb-2">{{ gasto_mes|stringformat:".2f" }}€</h1>
-                    <div class="divider-stats my-3" style="height: 2px; background: rgba(255,255,255,0.2); width: 50%; margin: 0 auto;"></div>
-                    <p class="mb-0 opacity-75 fw-semibold">Control de gastos mensual</p>
+            <div class="card card-stats-hero border-0 shadow-lg text-white" 
+                style="background: {% if presupuesto > 0 and porcentaje > 90 %}linear-gradient(135deg, #e11d48 0%, #fb7185 100%){% else %}linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%){% endif %};">
+                <div class="card-body py-4">
+                    <p class="mb-1 opacity-75 fw-bold text-uppercase label-stats" style="letter-spacing: 2px; font-size: 0.75rem;">
+                        {{ mes_nombre }} / Gasto Actual
+                    </p>
+                    <h1 class="display-4 fw-bold mb-0">{{ gasto_mes|stringformat:".2f" }}€</h1>
+                    
+                    {% if presupuesto > 0 %}
+                        <div class="mt-3 px-3">
+                            <div class="d-flex justify-content-between mb-1 small opacity-75 fw-bold">
+                                <span>Ppto: {{ presupuesto }}€</span>
+                                <span>{{ porcentaje|floatformat:0 }}%</span>
+                            </div>
+                            <div class="progress" style="height: 8px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; position: relative;">
+                                <div id="budget-bar" 
+                                    class="progress-bar bg-white" 
+                                    role="progressbar" 
+                                    style="width: 0%;" 
+                                    data-percentage="{{ porcentaje }}">
+                                </div>
+                            </div>
+                           <p class="mt-2 mb-0 small opacity-75 italic">
+                                {% if restante > 0 %}
+                                    Te quedan <strong>{{ restante|stringformat:".2f" }}€</strong> libres.
+                                {% elif excedente > 0 %}
+                                    Has superado el presupuesto por <strong>{{ excedente|stringformat:".2f" }}€</strong>.
+                                {% else %}
+                                    Has alcanzado exactamente tu presupuesto.
+                                {% endif %}
+                            </p>
+                        </div>
+                    {% else %}
+                        <div class="divider-stats my-3" style="height: 2px; background: rgba(255,255,255,0.2); width: 50%; margin: 0 auto;"></div>
+                        <p class="mb-0 opacity-75 small">Configura tu presupuesto en el perfil para mayor control.</p>
+                    {% endif %}
                 </div>
             </div>
         </section>

@@ -1,0 +1,26 @@
+{% extends 'layouts/base_auth.html' %}
+
+{% block auth_content %}
+    <p class="text-center text-muted mb-4 small-caps fw-bold label-spacing">¡Hola de nuevo!</p>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label text-muted small fw-bold label-spacing">USUARIO</label>
+            <input type="text" name="username" class="form-control" placeholder="Tu usuario" required>
+        </div>
+        
+        <div class="mb-4">
+            <label class="form-label text-muted small fw-bold label-spacing">CONTRASEÑA</label>
+            <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+        </div>
+        
+        <button class="btn btn-primary w-100 py-3" type="submit">
+            ENTRAR
+        </button>
+    </form>
+    
+    <div class="mt-4 text-center">
+        <a href="{% url 'registro' %}" class="text-decoration-none fw-bold text-primary small">Crear cuenta nueva</a>
+    </div>
+{% endblock %}

@@ -52,7 +52,7 @@ Si quieres probar SwiftList en tu propio entorno:
 
 1. **Clonar el repositorio:**
 
-   git clone [https://github.com/RaulGuiraoD/marketList.git](https://github.com/RaulGuiraoD/marketList.git)
+   git clone [https://github.com/RaulGuiraoD/SwiftList.git](https://github.com/RaulGuiraoD/SwiftList.git)
 
 2. **Instalar dependencias:**
 

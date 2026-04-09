@@ -1,0 +1,38 @@
+{% extends 'layouts/base_auth.html' %}
+
+{% block auth_content %}
+    <p class="text-center text-muted mb-4 small-caps fw-bold label-spacing">Crea tu cuenta</p>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        {% for field in form %}
+            <div class="mb-3">
+                <label class="form-label text-muted small fw-bold text-uppercase label-spacing">
+                    {{ field.label }}
+                </label>
+                
+                <input type="{{ field.field.widget.input_type|default:'text' }}" 
+                       name="{{ field.name }}" 
+                       class="form-control" 
+                       placeholder="Escribe tu {{ field.label|lower }}..."
+                       {% if field.field.required %}required{% endif %}>
+                
+                {% for error in field.errors %}
+                    <div class="text-danger mt-1 small fw-bold" style="font-size: 0.7rem;">
+                         <i class="bi bi-exclamation-circle"></i> {{ error }}
+                    </div>
+                {% endfor %}
+                
+            </div>
+        {% endfor %}
+        
+        <button class="btn btn-primary w-100 py-3 mt-3" type="submit">
+            REGISTRARME
+        </button>
+    </form>
+    
+    <div class="mt-4 text-center">
+        <a href="{% url 'login' %}" class="text-decoration-none fw-bold text-primary small">¿Ya tienes cuenta? Entra aquí</a>
+    </div>
+{% endblock %}

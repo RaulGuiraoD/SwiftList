@@ -1,0 +1,129 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block title %}Mi Perfil - SwiftList{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+        <div class="d-flex align-items-center mt-5 mb-4 px-2">
+            <a href="{% url 'dashboard' %}" class="btn btn-back rounded-circle me-3 shadow-sm">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+            <h4 class="fw-bold mb-0">Mi Perfil</h4>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4 text-center">
+                    <div class="bg-primary-subtle rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px; font-size: 2.5rem;">
+                        <span id="current-avatar">{{ perfil.avatar_icon }}</span>
+                    </div>
+                    <p class="text-muted small fw-bold text-uppercase mb-3">Elige tu icono</p>
+                    <div class="d-flex justify-content-center gap-2 flex-wrap">
+                        {% with current_icon=perfil.avatar_icon|default:"👤" %}
+                        
+                        <label class="btn btn-light border avatar-selector-btn rounded-circle d-flex align-items-center justify-content-center p-0 {% if current_icon == '👤' %}active-avatar{% endif %}" style="width: 45px; height: 45px;">
+                            <input type="radio" name="avatar_icon" value="👤" class="d-none avatar-input" {% if current_icon == '👤' %}checked{% endif %}>
+                            <span class="fs-4">👤</span>
+                        </label>
+
+                        <label class="btn btn-light border avatar-selector-btn rounded-circle d-flex align-items-center justify-content-center p-0 {% if current_icon == '🍎' %}active-avatar{% endif %}" style="width: 45px; height: 45px;">
+                            <input type="radio" name="avatar_icon" value="🍎" class="d-none avatar-input" {% if current_icon == '🍎' %}checked{% endif %}>
+                            <span class="fs-4">🍎</span>
+                        </label>
+
+                        <label class="btn btn-light border avatar-selector-btn rounded-circle d-flex align-items-center justify-content-center p-0 {% if current_icon == '🥦' %}active-avatar{% endif %}" style="width: 45px; height: 45px;">
+                            <input type="radio" name="avatar_icon" value="🥦" class="d-none avatar-input" {% if current_icon == '🥦' %}checked{% endif %}>
+                            <span class="fs-4">🥦</span>
+                        </label>
+
+                        <label class="btn btn-light border avatar-selector-btn rounded-circle d-flex align-items-center justify-content-center p-0 {% if current_icon == '🥩' %}active-avatar{% endif %}" style="width: 45px; height: 45px;">
+                            <input type="radio" name="avatar_icon" value="🥩" class="d-none avatar-input" {% if current_icon == '🥩' %}checked{% endif %}>
+                            <span class="fs-4">🥩</span>
+                        </label>
+
+                        <label class="btn btn-light border avatar-selector-btn rounded-circle d-flex align-items-center justify-content-center p-0 {% if current_icon == '🛒' %}active-avatar{% endif %}" style="width: 45px; height: 45px;">
+                            <input type="radio" name="avatar_icon" value="🛒" class="d-none avatar-input" {% if current_icon == '🛒' %}checked{% endif %}>
+                            <span class="fs-4">🛒</span>
+                        </label>
+
+                        <label class="btn btn-light border avatar-selector-btn rounded-circle d-flex align-items-center justify-content-center p-0 {% if current_icon == '🍕' %}active-avatar{% endif %}" style="width: 45px; height: 45px;">
+                            <input type="radio" name="avatar_icon" value="🍕" class="d-none avatar-input" {% if current_icon == '🍕' %}checked{% endif %}>
+                            <span class="fs-4">🍕</span>
+                        </label>
+
+                        <label class="btn btn-light border avatar-selector-btn rounded-circle d-flex align-items-center justify-content-center p-0 {% if current_icon == '🥑' %}active-avatar{% endif %}" style="width: 45px; height: 45px;">
+                            <input type="radio" name="avatar_icon" value="🥑" class="d-none avatar-input" {% if current_icon == '🥑' %}checked{% endif %}>
+                            <span class="fs-4">🥑</span>
+                        </label>
+
+                        <label class="btn btn-light border avatar-selector-btn rounded-circle d-flex align-items-center justify-content-center p-0 {% if current_icon == '🐱' %}active-avatar{% endif %}" style="width: 45px; height: 45px;">
+                            <input type="radio" name="avatar_icon" value="🐱" class="d-none avatar-input" {% if current_icon == '🐱' %}checked{% endif %}>
+                            <span class="fs-4">🐱</span>
+                        </label>
+
+                        <label class="btn btn-light border avatar-selector-btn rounded-circle d-flex align-items-center justify-content-center p-0 {% if current_icon == '🐶' %}active-avatar{% endif %}" style="width: 45px; height: 45px;">
+                            <input type="radio" name="avatar_icon" value="🐶" class="d-none avatar-input" {% if current_icon == '🐶' %}checked{% endif %}>
+                            <span class="fs-4">🐶</span>
+                        </label>
+
+                        <label class="btn btn-light border avatar-selector-btn rounded-circle d-flex align-items-center justify-content-center p-0 {% if current_icon == '⚡' %}active-avatar{% endif %}" style="width: 45px; height: 45px;">
+                            <input type="radio" name="avatar_icon" value="⚡" class="d-none avatar-input" {% if current_icon == '⚡' %}checked{% endif %}>
+                            <span class="fs-4">⚡</span>
+                        </label>
+
+                        {% endwith %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h6 class="text-muted small-caps fw-bold mb-4 label-spacing">Datos Personales</h6>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-bold text-uppercase label-spacing">Nombre Público</label>
+                        <input type="text" name="nombre" class="form-control" value="{{ perfil.nombre_completo }}" placeholder="Tu nombre">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-bold text-uppercase label-spacing">Apellidos</label>
+                        <input type="text" name="apellidos" class="form-control" value="{{ perfil.apellidos }}" placeholder="Tus apellidos">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-bold text-uppercase label-spacing">Sexo</label>
+                        <select name="sexo" class="form-select">
+                            <option value="N" {% if perfil.sexo == 'N' %}selected{% endif %}>Prefiero no decirlo</option>
+                            <option value="M" {% if perfil.sexo == 'M' %}selected{% endif %}>Masculino</option>
+                            <option value="F" {% if perfil.sexo == 'F' %}selected{% endif %}>Femenino</option>
+                            <option value="O" {% if perfil.sexo == 'O' %}selected{% endif %}>Otro</option>
+                        </select> 
+                    </div>
+
+                    <div class="mb-0">
+                        <label for="presupuesto" class="form-label fw-bold">Presupuesto Mensual (€)</label>
+                        <div class="input-group">
+                            <input type="number" 
+                                step="0.01" 
+                                name="presupuesto" 
+                                id="presupuesto" 
+                                class="form-control" 
+                                placeholder="0.00"
+                                value="{{ perfil.presupuesto_mensual|default:'0.00'|stringformat:'.2f' }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-3 shadow-sm btn-empezar mb-5">
+                GUARDAR CAMBIOS
+            </button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

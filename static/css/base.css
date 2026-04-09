@@ -5,7 +5,7 @@
     --text-dark: #2c2c2c;
     --text-muted: #7a7a7a;
     --card-border: #f0eee4;
-    --danger-red: #ff4d4d;
+    --danger-red: #de1818;
 }
 
 body {
@@ -17,6 +17,55 @@ body {
 
 .container-main {
     max-width: 600px;
+}
+
+.wrapper-auth {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    /* Centrado vertical */
+    justify-content: center;
+    padding: 24px;
+    /* Espacio lateral en móviles */
+    background-color: var(--bg-warm);
+}
+.bg-red {
+    background-color: #e11d48 !important; /* Un rojo moderno tipo Tailwind/Rose */
+}
+
+.bg-red:hover {
+    background-color: #be123c !important;
+    
+}
+
+.auth-card-container {
+    width: 100%;
+    max-width: 400px;
+    /* Ancho máximo de móvil */
+}
+
+.auth-logo {
+    max-height: 90px;
+    width: auto;
+}
+
+.btn:active {
+    transform: scale(0.97);
+    transition: transform 0.1s;
+}
+
+.active-avatar {
+    background-color: var(--primary-green-light) !important;
+    border-color: var(--primary-green) !important;
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-selector-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
 }
 
 /* --- Estilos para Avisos (Toasts) --- */
@@ -294,8 +343,10 @@ body {
 /* Input de añadir */
 .input-group-rounded {
     background-color: white;
-    border-radius: 50px !important; /* Forma de cápsula */
-    padding: 4px; /* Crea el efecto de que el botón flota dentro */
+    border-radius: 50px !important;
+    /* Forma de cápsula */
+    padding: 4px;
+    /* Crea el efecto de que el botón flota dentro */
     overflow: hidden;
 }
 
@@ -306,28 +357,35 @@ body {
 }
 
 .input-add-item:focus {
-    box-shadow: none; /* Quitamos el brillo azul feo de Bootstrap */
+    box-shadow: none;
+    /* Quitamos el brillo azul feo de Bootstrap */
 }
 
 .btn-add-swift {
-    border-radius: 50px !important; /* Botón circular o muy redondeado */
-    width: 42px; /* Lo hacemos casi cuadrado para que sea un círculo */
+    border-radius: 50px !important;
+    /* Botón circular o muy redondeado */
+    width: 42px;
+    /* Lo hacemos casi cuadrado para que sea un círculo */
     height: 42px;
-    margin: 4px; /* Margen interno para que no toque los bordes del div */
+    margin: 4px;
+    /* Margen interno para que no toque los bordes del div */
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 !important; /* Reset de padding para centrar el icono */
+    padding: 0 !important;
+    /* Reset de padding para centrar el icono */
     transition: all 0.3s ease;
 }
 
 .btn-add-swift:active {
-    transform: scale(0.9); /* Efecto de pulsación */
+    transform: scale(0.9);
+    /* Efecto de pulsación */
 }
 
 .btn-add-swift i {
     font-size: 1.2rem;
-    -webkit-text-stroke: 1px; /* Hace el icono del + un pelín más grueso */
+    -webkit-text-stroke: 1px;
+    /* Hace el icono del + un pelín más grueso */
 }
 
 /* Items de la lista */
@@ -446,11 +504,12 @@ body {
 .item-maestro {
     cursor: default;
     transition: all 0.2s ease;
-    user-select: none; /* Evita que se seleccione el texto al hacer muchos clics */
+    user-select: none;
+    /* Evita que se seleccione el texto al hacer muchos clics */
 }
 
 /* Solo mostramos cursor de mano cuando estamos en modo edición */
-#selectionTools:not(.d-none) ~ .section-gap .item-maestro {
+#selectionTools:not(.d-none)~.section-gap .item-maestro {
     cursor: pointer;
 }
 
@@ -463,5 +522,45 @@ body {
 }
 
 .producto-checkbox {
-    pointer-events: auto; /* Permite clics directos en el check */
+    pointer-events: auto;
+    /* Permite clics directos en el check */
+}
+
+/* Solo el diseño y el brillo de la barra */
+#budget-bar {
+    border-radius: 10px;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+    position: relative;
+    overflow: hidden;
+    /* Forzamos la transición aquí */
+    transition: width 1.5s ease-in-out !important; 
+}
+
+/* El brillo (esto debería funcionar siempre) */
+#budget-bar::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(90deg, transparent, var(--danger-red), transparent);
+    animation: shine-bar 2s infinite;
+}
+
+@keyframes shine-bar {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Blindaje para el botón de eliminar del modal */
+.btn-danger-custom {
+    background-color: var(--danger-red) !important;
+    color: white !important;
+    border: none !important;
+}
+
+.btn-danger-custom:hover, 
+.btn-danger-custom:focus, 
+.btn-danger-custom:active {
+    background-color: #b91515 !important; /* Un rojo un pelín más oscuro */
+    color: white !important;               /* Aseguramos que el texto SIGA blanco */
+    
 }

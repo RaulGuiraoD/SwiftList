@@ -1,9 +1,14 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Tienda(models.Model):
     # Añadimos unique=True para que la base de datos no acepte repetidos
-    nombre = models.CharField(max_length=100, unique=True) 
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tiendas', null=True, blank=True)
+    nombre = models.CharField(max_length=100) 
     color_hex = models.CharField(max_length=7, default="#0a8f34")
+
+    class Meta:
+        unique_together = ('usuario', 'nombre')
 
     def __str__(self):
         return self.nombre
@@ -15,16 +20,21 @@ class Tienda(models.Model):
 
 class MaestroProducto(models.Model):
     """ El 'cerebro'. Aquí se guarda todo lo que ella ha comprado alguna vez. """
-    nombre = models.CharField(max_length=200, unique=True)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='productos_maestros', null=True, blank=True)
+    nombre = models.CharField(max_length=200)
     tienda_habitual = models.ForeignKey(Tienda, on_delete=models.SET_NULL, null=True, blank=True)
     frecuencia_uso = models.PositiveIntegerField(default=0)
-    zona = models.CharField(max_length=100, default="General", help_text="Ej: Frutería, Carnicería, Limpieza")
+    zona = models.CharField(max_length=100, default="General")
+
+    class Meta:
+        unique_together = ('usuario', 'nombre')
 
     def __str__(self):
         return f"{self.nombre} ({self.zona})"
 
 class ListaCompra(models.Model):
     """ Representa una 'sesión' de compra: 'Compra Mercadona Martes' """
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='listas', null=True, blank=True)
     tienda = models.ForeignKey(Tienda, on_delete=models.CASCADE)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     esta_finalizada = models.BooleanField(default=False)
@@ -44,3 +54,21 @@ class ItemLista(models.Model):
 
     def __str__(self):
         return f"{self.producto_maestro.nombre} en {self.lista}"
+    
+class PerfilUsuario(models.Model):
+    SEXO_CHOICES = [
+        ('M', 'Masculino'),
+        ('F', 'Femenino'),
+        ('O', 'Otro'),
+        ('N', 'Prefiero no decirlo'),
+    ]
+
+    usuario = models.OneToOneField(User, on_delete=models.CASCADE)
+    nombre_completo = models.CharField(max_length=100, blank=True) # El que sale fuera
+    apellidos = models.CharField(max_length=100, blank=True)
+    sexo = models.CharField(max_length=1, choices=SEXO_CHOICES, default='N')
+    presupuesto_mensual = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    avatar_icon = models.CharField(max_length=20, default="👤") # Avatar por defecto
+
+    def __str__(self):
+        return f"Perfil de {self.usuario.username}"
