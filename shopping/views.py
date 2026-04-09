@@ -2,12 +2,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.db import IntegrityError
 from django.db.models import Sum, Count, Q
 from django.utils import timezone
-from .models import Tienda, ListaCompra, MaestroProducto, ItemLista
+from .models import Tienda, ListaCompra, MaestroProducto, ItemLista, PerfilUsuario
 from django.db.models.functions import TruncMonth
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
+from django.contrib import messages
 
 def registro(request):
     if request.method == 'POST':
@@ -20,6 +21,22 @@ def registro(request):
         form = UserCreationForm()
     return render(request, 'registration/registro.html', {'form': form})
 
+@login_required
+def perfil(request):
+    perfil, created = PerfilUsuario.objects.get_or_create(usuario=request.user)
+    
+    if request.method == 'POST':
+        perfil.nombre_completo = request.POST.get('nombre')
+        perfil.apellidos = request.POST.get('apellidos')
+        perfil.sexo = request.POST.get('sexo')
+        perfil.presupuesto_mensual = request.POST.get('presupuesto') or None
+        perfil.avatar_icon = request.POST.get('avatar_icon', perfil.avatar_icon)
+        perfil.save()
+        
+        messages.success(request, "Perfil actualizado")
+        return redirect('dashboard')
+
+    return render(request, 'shopping/perfil.html', {'perfil': perfil})
 
 @login_required
 def dashboard(request):

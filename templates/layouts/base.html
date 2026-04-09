@@ -79,7 +79,22 @@
             }
         });
     </script>
-    <script src="{% static 'js/base.js' %}"></script>
+
 </body>
 
+{% if messages %}
+        <div id="messages-container" class="position-fixed bottom-0 start-50 translate-middle-x mb-4" style="z-index: 1050;">
+            {% for message in messages %}
+                <div class="toast show align-items-center text-white border-0 shadow-lg" role="alert" 
+                     style="background: var(--primary-green); border-radius: 50px; padding: 5px 20px;">
+                    <div class="d-flex">
+                        <div class="toast-body fw-bold">
+                            <i class="bi bi-check-circle-fill me-2"></i> {{ message }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+<script src="{% static 'js/base.js' %}"></script>
 </html>

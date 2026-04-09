@@ -41,6 +41,25 @@ body {
     width: auto;
 }
 
+.btn:active {
+    transform: scale(0.97);
+    transition: transform 0.1s;
+}
+
+.active-avatar {
+    background-color: var(--primary-green-light) !important;
+    border-color: var(--primary-green) !important;
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-selector-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
 /* --- Estilos para Avisos (Toasts) --- */
 .toast {
     background: var(--primary-green) !important;
